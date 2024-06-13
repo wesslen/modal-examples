@@ -1,0 +1,217 @@
+---
+title: "Building Containers"
+subtitle: "Chapter 2"
+author: "Ryan Wesslen"
+toc: true
+format:
+  html:
+    html-math-method: katex
+    code-tools: true
+    self-contained: true
+execute:
+  echo: true
+  eval: false
+---
+
+Let's now build containers.
+
+## import_sklearn.py
+
+### Install scikit-learn in a custom image
+
+This builds a custom image which installs the sklearn (scikit-learn) Python package in it. It's an example of how you can use packages, even if you don't have them installed locally.
+
+First, the imports:
+
+```python
+import time
+import modal
+```
+
+Next, we'll define an app, with a custom image that installs `sklearn`.
+
+```python
+app = modal.App(
+    "import-sklearn",
+    image=modal.Image.debian_slim()
+    .apt_install("libgomp1")
+    .pip_install("scikit-learn"),
+)
+```
+
+The `app.image.imports()` lets us conditionally import in the global scope. This is needed because we might not have sklearn and numpy installed locally, but we know they are installed inside the custom image.
+
+```python
+with app.image.imports():
+    import numpy as np
+    from sklearn import datasets, linear_model
+```
+
+Now, let's define a function that uses one of scikit-learn's built-in datasets and fits a very simple model (linear regression) to it.
+
+```python
+@app.function()
+def fit():
+    print("Inside run!")
+    t0 = time.time()
+    diabetes_X, diabetes_y = datasets.load_diabetes(return_X_y=True)
+    diabetes_X = diabetes_X[:, np.newaxis, 2]
+    regr = linear_model.LinearRegression()
+    regr.fit(diabetes_X, diabetes_y)
+    return time.time() - t0
+```
+
+Finally, we'd trigger the run locally. We also time this. Note that the first time we run this, it will build the image. This might take 1-2 min. When we run this subsequent times, the image is already build, and it will run much much faster.
+
+```python
+if __name__ == "__main__":
+    t0 = time.time()
+    with app.run():
+        t = fit.remote()
+        print("Function time spent:", t)
+    print("Full time spent:", time.time() - t0)
+```
+
+Let's now run it all:
+
+```bash
+$ modal run import_sklearn.py 
+✓ Initialized. View run at https://modal.com/charlotte-llm/main/apps/ap-xxxxxxxxxx
+Building image im-m9EoOtS0dmWsGUat8WCWFc
+
+=> Step 0: FROM base
+
+=> Step 1: RUN apt-get update
+Get:1 http://deb.debian.org/debian bullseye InRelease [116 kB]
+Get:2 http://deb.debian.org/debian-security bullseye-security InRelease [48.4 kB]
+Get:3 http://deb.debian.org/debian bullseye-updates InRelease [44.1 kB]
+Get:4 http://deb.debian.org/debian bullseye/main amd64 Packages [8068 kB]
+Get:5 http://deb.debian.org/debian-security bullseye-security/main amd64 Packages [275 kB]
+Get:6 http://deb.debian.org/debian bullseye-updates/main amd64 Packages.diff/Index [26.3 kB]
+Get:7 http://deb.debian.org/debian bullseye-updates/main amd64 Packages T-2023-12-29-1403.39-F-2023-07-31-2005.11.pdiff [6053 B]
+Get:7 http://deb.debian.org/debian bullseye-updates/main amd64 Packages T-2023-12-29-1403.39-F-2023-07-31-2005.11.pdiff [6053 B]
+Get:8 http://deb.debian.org/debian bullseye-updates/main amd64 Packages [18.8 kB]
+Fetched 8602 kB in 4s (2239 kB/s)
+Reading package lists...
+
+=> Step 2: RUN apt-get install -y libgomp1
+Reading package lists...
+Building dependency tree...
+Reading state information...
+libgomp1 is already the newest version (10.2.1-6).
+libgomp1 set to manually installed.
+0 upgraded, 0 newly installed, 0 to remove and 46 not upgraded.
+Creating image snapshot...
+Finished snapshot; took 1.14s
+
+Built image im-m9EoOtS0dmWsGUat8WCWFc in 8.53s
+Building image im-Kndkz3TpRhPEMy6UcNR7YR
+
+=> Step 0: FROM base
+
+=> Step 1: RUN python -m pip install scikit-learn 
+Looking in indexes: http://pypi-mirror.modal.local:5555/simple
+Collecting scikit-learn
+  Downloading http://pypi-mirror.modal.local:5555/simple/scikit-learn/scikit_learn-1.5.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (13.3 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.3/13.3 MB 169.9 MB/s eta 0:00:00
+Requirement already satisfied: numpy>=1.19.5 in /usr/local/lib/python3.10/site-packages (from scikit-learn) (1.25.0)
+Collecting scipy>=1.6.0 (from scikit-learn)
+  Downloading http://pypi-mirror.modal.local:5555/simple/scipy/scipy-1.13.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (38.6 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 38.6/38.6 MB 233.1 MB/s eta 0:00:00
+Collecting joblib>=1.2.0 (from scikit-learn)
+  Downloading http://pypi-mirror.modal.local:5555/simple/joblib/joblib-1.4.2-py3-none-any.whl (301 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 301.8/301.8 kB 252.9 MB/s eta 0:00:00
+Collecting threadpoolctl>=3.1.0 (from scikit-learn)
+  Downloading http://pypi-mirror.modal.local:5555/simple/threadpoolctl/threadpoolctl-3.5.0-py3-none-any.whl (18 kB)
+Installing collected packages: threadpoolctl, scipy, joblib, scikit-learn
+Successfully installed joblib-1.4.2 scikit-learn-1.5.0 scipy-1.13.1 threadpoolctl-3.5.0
+
+[notice] A new release of pip is available: 23.1.2 -> 24.0
+[notice] To update, run: pip install --upgrade pip
+Creating image snapshot...
+Finished snapshot; took 2.27s
+
+Built image im-Kndkz3TpRhPEMy6UcNR7YR in 13.14s
+✓ Created objects.
+├── 🔨 Created mount /modal-examples/02_building_containers/import_sklearn.py
+└── 🔨 Created function fit.
+Inside run!
+Stopping app - local entrypoint completed.
+✓ App completed. View run at https://modal.com/charlotte-llm/main/apps/ap-xxxxxxxxxx
+```
+
+So from the above, it took `8.53s` to build the first image, `2.27s` to create the snapshot and `13.14s` to build the second image. But if we run this again, it'll be much faster than before as we've already.
+
+## import_sklearn_r2.py
+
+Just for fun, let's modify this script to now output the R^2 value on the test data.
+
+```{.python filename="import_sklearn_r2.py"}
+import time
+import modal
+
+app = modal.App(
+    "import-sklearn",
+    image=modal.Image.debian_slim()
+    .apt_install("libgomp1")
+    .pip_install("scikit-learn"),
+)
+
+with app.image.imports():
+    import numpy as np
+    from sklearn import datasets, linear_model
+    from sklearn.model_selection import train_test_split
+    from sklearn.metrics import r2_score
+
+@app.function()
+def fit():
+    print("Inside run!")
+    X, y = datasets.load_diabetes(return_X_y=True)
+    X = X[:, np.newaxis, 2]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+    regr = linear_model.LinearRegression()
+    regr.fit(X_train, y_train)
+    predict = regr.predict(X_test)
+    
+    return r2_score(predict, y_test)
+
+
+if __name__ == "__main__":
+    t0 = time.time()
+    with app.run():
+        t = fit.remote()
+        print("R Squared is:", t)
+    print("Full time spent:", time.time() - t0)
+
+```
+
+Running this, we get:
+
+```bash
+$ modal run import_sklearn_r2.py
+✓ Initialized. View run at https://modal.com/charlotte-llm/main/apps/ap-xxxxxxxxx
+✓ Created objects.
+├── 🔨 Created mount /modal-examples/02_building_containers/import_sklearn_r2.py
+└── 🔨 Created function fit.
+Inside run!
+Stopping app - local entrypoint completed.
+✓ App completed. View run at https://modal.com/charlotte-llm/main/apps/ap-xxxxxxxxxx
+```
+
+This result somewhat surprised me. 
+
+First, I didn't see the output R^2. I was expecting this perhaps the first time running, but didn't see it.
+
+Second, after running, unlike the previous example that shut down immediately, this container was running ephemerally:
+
+![](images/02_building_containers/sklearn-r2.png)
+
+TBD - understand what's going on.
+
+## install_cuda.py
+
+TBD
+
+## screenshot.py
+
+TBD

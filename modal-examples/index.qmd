@@ -1,0 +1,7 @@
+# Preface {.unnumbered}
+
+This is a Quarto book on notes on running [Modal examples](https://github.com/modal-labs/modal-examples).
+
+This is meant as a personal reference and not an official guide on Modal.
+
+All credit should be given to the Modal team for a wonderful tool and example setup.
