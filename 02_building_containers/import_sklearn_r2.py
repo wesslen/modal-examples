@@ -15,7 +15,7 @@ with app.image.imports():
     from sklearn.metrics import r2_score
 
 @app.function()
-def fit():
+def fit_r2():
     print("Inside run!")
     X, y = datasets.load_diabetes(return_X_y=True)
     X = X[:, np.newaxis, 2]
@@ -30,6 +30,6 @@ def fit():
 if __name__ == "__main__":
     t0 = time.time()
     with app.run():
-        t = fit.remote()
+        t = fit_r2.remote()
         print("R Squared is:", t)
     print("Full time spent:", time.time() - t0)
