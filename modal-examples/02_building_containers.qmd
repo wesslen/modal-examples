@@ -13,7 +13,17 @@ execute:
   eval: false
 ---
 
-Let's now build containers.
+From the [docs](https://modal.com/docs/guide/custom-container):
+
+> Containers are like light-weight virtual machines — container engines use operating system tricks to isolate programs from each other (“containing” them), making them work as though they were running on their own hardware with their own filesystem. This makes execution environments more reproducible, for example by preventing accidental cross-contamination of environments on the same machine. For added security, Modal runs containers using the sandboxed gVisor container runtime.
+> 
+> Containers are started up from a stored “snapshot” of their filesystem state called an image. Producing the image for a container is called building the image.
+> 
+> By default, Modal functions are executed in a Debian Linux container with a basic Python installation of the same minor version v3.x as your local Python interpreter.
+> 
+> Customizing this environment is critical. To make your apps and functions useful, you will probably need some third party system packages or Python libraries. To make them start up faster, you can bake data like model weights into the container image, taking advantage of Modal’s optimized filesystem for serving containers.
+> 
+> Modal provides a number of options to customize your container images at different levels of abstraction and granularity, from high-level convenience methods like pip_install through wrappers of core container image build features like RUN and ENV to full on “bring-your-own-Dockerfile”. We’ll cover each of these in this guide, along with tips and tricks for building images effectively when using each tool.
 
 ## import_sklearn.py
 
@@ -38,6 +48,14 @@ app = modal.App(
     .pip_install("scikit-learn"),
 )
 ```
+
+::: {.callout-tip}
+
+## Chaining
+
+A nice design in `modal` is the idea of method chaining, where the image is built by [layers](https://docs.docker.com/build/guide/layers/).
+
+:::
 
 The `app.image.imports()` lets us conditionally import in the global scope. This is needed because we might not have sklearn and numpy installed locally, but we know they are installed inside the custom image.
 
@@ -206,12 +224,162 @@ Second, after running, unlike the previous example that shut down immediately, t
 
 ![](images/02_building_containers/sklearn-r2.png)
 
-TBD - understand what's going on.
+So let's rerun, but this time renaming our function from `fit` to `fit_r2`:
+
+```bash
+$ modal run import_sklearn_r2.py
+✓ Initialized. View run at https://modal.com/charlotte-llm/main/apps/ap-xxxxxxxxxx
+✓ Created objects.
+├── 🔨 Created mount /modal-examples/02_building_containers/import_sklearn_r2.py
+└── 🔨 Created function fit_r2.
+Inside run!
+Stopping app - local entrypoint completed.
+✓ App completed. View run at https://modal.com/charlotte-llm/main/apps/ap-xxxxxxxxxx
+```
+
+This avoided the issue of perpetually running but didn't print the R^2 to console:
+
+![](images/02_building_containers/sklearn-r2-2.png)
+
+The main takeaway is to keep an eye on the naming of remote functions.
 
 ## install_cuda.py
 
-TBD
+The next examples shows how to use the Nvidia CUDA base image from DockerHub.
+
+Here's a [list](https://hub.docker.com/r/nvidia/cuda/tags) of the different CUDA images available.
+
+We need to add Python 3 and pip with the `add_python` option because the image doesn't have these by default.
+
+```{.python filename="install_cuda.py"}
+from modal import App, Image
+
+image = Image.from_registry(
+    "nvidia/cuda:12.2.0-devel-ubuntu22.04", add_python="3.11"
+)
+app = App(image=image)
+
+@app.function(gpu="T4")
+def f():
+    import subprocess
+
+    subprocess.run(["nvidia-smi"])
+```
+
+Running it provides:
+
+```bash
+$ modal run install_cuda.py     
+✓ Initialized. View run at https://modal.com/charlotte-llm/main/apps/ap-xxxxxxxxxx
+Building image im-NAV0762Ag7PgTCJY8XyAqb
+
+=> Step 0: FROM nvidia/cuda:12.2.0-devel-ubuntu22.04
+Getting image source signatures
+Copying blob sha256:9a9dd462fc4c5ca1dd29994385be60a5bb359843fc93447331b8c97dfec99bf9
+Copying blob sha256:9fe5ccccae45d6811769206667e494085cb511666be47b8e659087c249083c3f
+Copying blob sha256:aece8493d3972efa43bfd4ee3cdba659c0f787f8f59c82fb3e48c87cbb22a12e
+Copying blob sha256:bdddd5cb92f6b4613055bcbcd3226df9821c7facd5af9a998ba12dae080ef134
+Copying blob sha256:8054e9d6e8d6718cc3461aa4172ad048564cdf9f552c8f9820bd127859aa007c
+Copying blob sha256:5324914b447286e0e6512290373af079a25f94499a379e642774245376e60885
+Copying blob sha256:95eef45e00fabd2bce97586bfe26be456b0e4b3ef3d88d07a8b334ee05cc603c
+Copying blob sha256:e2554c2d377e1176c0b8687b17aa7cbe2c48746857acc11686281a4adee35a0a
+Copying blob sha256:4640d022dbb8eb47da53ccc2de59f8f5e780ea046289ba3cffdf0a5bd8d19810
+Copying blob sha256:aa750c79a4cc745750c40a37cad738f9bcea14abb96b0c5a811a9b53f185b9c9
+Copying blob sha256:9e2de25be969afa4e73937f8283a1100f4d964fc0876c2f2184fda25ad23eeda
+Copying config sha256:fead46ae620f9febc59f92a8f1f277f502ef6dca8111ce459c154d236ee84eee
+Writing manifest to image destination
+Unpacking OCI image
+   • unpacking rootfs ...
+   • ... done
+   • unpacked image rootfs: /tmp/.tmpDUhHRA
+
+=> Step 1: COPY /python/. /usr/local
+
+=> Step 2: RUN ln -s /usr/local/bin/python3 /usr/local/bin/python
+
+=> Step 3: ENV TERMINFO_DIRS=/etc/terminfo:/lib/terminfo:/usr/share/terminfo:/usr/lib/terminfo
+
+=> Step 4: COPY /modal_requirements.txt /modal_requirements.txt
+
+=> Step 5: RUN python -m pip install --upgrade pip
+Looking in indexes: http://pypi-mirror.modal.local:5555/simple
+Requirement already satisfied: pip in /usr/local/lib/python3.11/site-packages (23.2.1)
+Collecting pip
+  Obtaining dependency information for pip from http://pypi-mirror.modal.local:5555/simple/pip/pip-24.0-py3-none-any.whl.metadata
+  Downloading http://pypi-mirror.modal.local:5555/simple/pip/pip-24.0-py3-none-any.whl.metadata (3.6 kB)
+Downloading http://pypi-mirror.modal.local:5555/simple/pip/pip-24.0-py3-none-any.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 216.4 MB/s eta 0:00:00
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 23.2.1
+    Uninstalling pip-23.2.1:
+      Successfully uninstalled pip-23.2.1
+Successfully installed pip-24.0
+
+=> Step 6: RUN python -m pip install -r /modal_requirements.txt
+Looking in indexes: http://pypi-mirror.modal.local:5555/simple
+Ignoring cloudpickle: markers 'python_version < "3.11"' don't match your environment
+Ignoring ddtrace: markers 'python_version < "3.11"' don't match your environment
+Collecting aiohttp==3.8.3 (from -r /modal_requirements.txt (line 2))
+
+...
+
+Creating image snapshot...
+Finished snapshot; took 6.10s
+
+Built image im-NAV0762Ag7PgTCJY8XyAqb in 136.43s
+✓ Created objects.
+├── 🔨 Created mount /modal-examples/02_building_containers/install_cuda.py
+└── 🔨 Created function f.
+
+==========
+== CUDA ==
+==========
+
+CUDA Version 12.2.0
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
+Thu Jun 13 23:08:03 2024       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 550.54.15              Driver Version: 550.54.15      CUDA Version: 12.4     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  Tesla T4                       On  |   00000000:36:00.0 Off |                 ERR! |
+| N/A   32C ERR!               9W /   70W |       0MiB /  15360MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Stopping app - local entrypoint completed.
+✓ App completed. View run at https://modal.com/charlotte-llm/main/apps/ap-xxxxxxxxxx
+```
+
+While this process did take a few minutes, it's very easy and should be very quick if rerunning.
+
+It's also helpful to note how to run a subprocess as we would in Python anyways:
+
+```python
+import subprocess
+
+subprocess.run(["nvidia-smi"])
+```
 
 ## screenshot.py
 
-TBD
+Last, we'll finish
