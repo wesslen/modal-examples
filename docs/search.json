@@ -74,7 +74,7 @@
     "href": "03_scaling_out.html",
     "title": "4  Scaling out",
     "section": "",
-    "text": "5 basic_grid_search.py\nThis example showcases a simple grid search in one dimension, where we try different parameters for a model and pick the one with the best results on a holdout set.\nTBD\nLet’s test out what we’ve learned by creating a new script.\nFor this, we’ll use another scikit-learn tutorial (Gradient Boosting Regularization) but loop through a parameter (the sample size, n) and for each saving a matplotlib image from fetch_stock_prices.py.\nThis tutorial is inspired by a recent []:probabl. video](https://youtu.be/oZm4nGN8YMg) by Vincent Warmerdam that explored this tutorial more in detail."
+    "text": "5 basic_grid_search.py\nThis example showcases a simple grid search in one dimension, where we try different parameters for a model and pick the one with the best results on a holdout set.\nTBD\nLet’s test out what we’ve learned by creating a new script.\nFor this, we’ll use another scikit-learn tutorial (Gradient Boosting Regularization) but loop through a parameter (the sample size, n) and for each saving a matplotlib image from fetch_stock_prices.py.\nThis tutorial is inspired by a recent :probabl. video by Vincent Warmerdam that explored this tutorial more in detail."
   },
   {
     "objectID": "03_scaling_out.html#defining-the-image",

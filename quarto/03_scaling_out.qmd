@@ -128,7 +128,7 @@ Let's test out what we've learned by creating a new script.
 
 For this, we'll use another `scikit-learn` tutorial ([Gradient Boosting Regularization](https://scikit-learn.org/stable/auto_examples/ensemble/plot_gradient_boosting_regularization.html)) but loop through a parameter (the sample size, `n`) and for each saving a `matplotlib` image from `fetch_stock_prices.py`.
 
-This tutorial is inspired by a recent []:probabl. video](https://youtu.be/oZm4nGN8YMg) by Vincent Warmerdam that explored this tutorial more in detail.
+This tutorial is inspired by a recent [:probabl. video](https://youtu.be/oZm4nGN8YMg) by Vincent Warmerdam that explored this tutorial more in detail.
 
 ## Initialize the App
 
