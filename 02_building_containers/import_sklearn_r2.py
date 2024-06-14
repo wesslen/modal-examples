@@ -23,13 +23,13 @@ def fit_r2():
     regr = linear_model.LinearRegression()
     regr.fit(X_train, y_train)
     predict = regr.predict(X_test)
-    
-    return r2_score(predict, y_test)
+    r2 = r2_score(predict, y_test)
+    print("R squared is:", r2)
+    return r2
 
 
 if __name__ == "__main__":
     t0 = time.time()
     with app.run():
-        t = fit_r2.remote()
-        print("R Squared is:", t)
+        r2 = fit_r2.remote()
     print("Full time spent:", time.time() - t0)

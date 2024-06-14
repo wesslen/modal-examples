@@ -1,0 +1,22 @@
+project:
+  type: book
+  output-dir: ../docs
+
+book:
+  title: "Modal Examples"
+  author: "Ryan Wesslen"
+  date: "6/13/2024"
+  chapters:
+    - index.qmd
+    - 01_getting_started.qmd
+    - 02_building_containers.qmd
+    - 03_scaling_out.qmd
+  
+bibliography: references.bib
+
+format:
+  html:
+    theme: minty
+
+
+
