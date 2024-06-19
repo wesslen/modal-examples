@@ -13,17 +13,20 @@ execute:
   eval: false
 ---
 
-From the [docs](https://modal.com/docs/guide/custom-container):
+::: {.callout-note collapse="true"}
+## Modal [docs](https://modal.com/docs/guide/custom-container) on custom container
 
-> Containers are like light-weight virtual machines — container engines use operating system tricks to isolate programs from each other (“containing” them), making them work as though they were running on their own hardware with their own filesystem. This makes execution environments more reproducible, for example by preventing accidental cross-contamination of environments on the same machine. For added security, Modal runs containers using the sandboxed gVisor container runtime.
-> 
-> Containers are started up from a stored “snapshot” of their filesystem state called an image. Producing the image for a container is called building the image.
-> 
-> By default, Modal functions are executed in a Debian Linux container with a basic Python installation of the same minor version v3.x as your local Python interpreter.
-> 
-> Customizing this environment is critical. To make your apps and functions useful, you will probably need some third party system packages or Python libraries. To make them start up faster, you can bake data like model weights into the container image, taking advantage of Modal’s optimized filesystem for serving containers.
-> 
-> Modal provides a number of options to customize your container images at different levels of abstraction and granularity, from high-level convenience methods like pip_install through wrappers of core container image build features like RUN and ENV to full on “bring-your-own-Dockerfile”. We’ll cover each of these in this guide, along with tips and tricks for building images effectively when using each tool.
+Containers are like light-weight virtual machines — container engines use operating system tricks to isolate programs from each other (“containing” them), making them work as though they were running on their own hardware with their own filesystem. This makes execution environments more reproducible, for example by preventing accidental cross-contamination of environments on the same machine. For added security, Modal runs containers using the sandboxed gVisor container runtime.
+
+Containers are started up from a stored “snapshot” of their filesystem state called an image. Producing the image for a container is called building the image.
+
+By default, Modal functions are executed in a Debian Linux container with a basic Python installation of the same minor version v3.x as your local Python interpreter.
+
+Customizing this environment is critical. To make your apps and functions useful, you will probably need some third party system packages or Python libraries. To make them start up faster, you can bake data like model weights into the container image, taking advantage of Modal’s optimized filesystem for serving containers.
+
+Modal provides a number of options to customize your container images at different levels of abstraction and granularity, from high-level convenience methods like pip_install through wrappers of core container image build features like RUN and ENV to full on “bring-your-own-Dockerfile”. We’ll cover each of these in this guide, along with tips and tricks for building images effectively when using each tool.
+
+:::
 
 ## import_sklearn.py
 

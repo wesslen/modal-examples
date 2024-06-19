@@ -5,7 +5,7 @@ project:
 book:
   title: "Modal Examples"
   author: "Ryan Wesslen"
-  date: "6/15/2024"
+  date: "6/19/2024"
   chapters:
     - index.qmd
     - 01_getting_started.qmd
@@ -14,6 +14,13 @@ book:
     - 04_secrets.qmd
     - 05_scheduling.qmd
     - 06_gpu_and_ml.qmd
+    - 07_web_endpoints.qmd
+    - 08_advanced.qmd
+    - 09_job_queues.qmd
+    - 10_integrations.qmd
+    - 11_notebooks.qmd
+    - 12_datasets.qmd
+    - 13_finetuning.qmd
   
 bibliography: references.bib
 

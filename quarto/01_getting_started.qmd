@@ -205,9 +205,9 @@ I can view the output via browser:
 
 This example is obviously very simple, but there are many other things you can do with `modal` like:
 
-* Running [language model inference](/docs/examples/vllm_mixtral) or [fine-tuning](/docs/examples/slack-finetune)
-* Manipulating [audio](/docs/examples/discord-musicgen) or [images](stable_diffusion_xl_turbo)
-* [Collecting financial data](/docs/examples/fetch_stock_prices) to backtest a trading algorithm.
+* Running [language model inference](https://modal.com/docs/examples/vllm_mixtral) or [fine-tuning](https://modal.com/docs/examples/slack-finetune)
+* Manipulating [audio](https://modal.com/docs/examples/discord-musicgen) or [images](https://modal.com/docs/examples/stable_diffusion_xl_turbo)
+* [Collecting financial data](https://modal.com/docs/examples/fetch_stock_prices) to backtest a trading algorithm.
 
 # get_started.py
 
@@ -235,9 +235,9 @@ Notice the two different app decorators: `@app.function()` and `@app.local_entry
 
 
 
-::: {.callout-note}
+::: {.callout-note collapse="true"}
 
-## From the docs, a [`local_entrypoint`](https://modal.com/docs/reference/modal.App#local_entrypoint):
+## From the [docs](https://modal.com/docs/reference/modal.App#local_entrypoint), `local_entrypoint`:
 
 ```python
 > def local_entrypoint(
