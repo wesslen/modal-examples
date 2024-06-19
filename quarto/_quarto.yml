@@ -27,6 +27,7 @@ bibliography: references.bib
 format:
   html:
     theme: minty
+    embed-resources: false
 
 
 
