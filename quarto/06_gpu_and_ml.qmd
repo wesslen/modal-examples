@@ -14,9 +14,9 @@ execute:
 
 Let's get to what we're all here for: GPUs!
 
-# import_torch.py
+## import_torch.py
 
-## PyTorch with CUDA GPU support
+### PyTorch with CUDA GPU support
 
 This example shows how you can use CUDA GPUs in Modal, with a minimal PyTorch image. You can specify GPU requirements in the `app.function` decorator.
 
@@ -114,7 +114,7 @@ Stopping app - local entrypoint completed.
 ✓ App completed. View run at https://modal.com/charlotte-llm/main/apps/ap-xxxxxxxxxx
 ```
 
-# Stable diffusion via HF
+## Stable diffusion via HF
 
 For this, you'll need to create a secret via Modal for Huggingface.
 
@@ -152,7 +152,7 @@ async def run_stable_diffusion(prompt: str):
 @app.local_entrypoint()
 def main():
     img_bytes = run_stable_diffusion.remote("Tri-color beagle riding a bike in Paris, wearing a black beret, and a baguette in a bag in the bike's front basket.")
-    with open("/tmp/modal/parisian-beagle.png", "wb") as f:
+    with open("/tmp/parisian-beagle.png", "wb") as f:
         f.write(img_bytes)
 
 ```

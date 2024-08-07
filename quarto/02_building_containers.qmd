@@ -81,7 +81,11 @@ def fit():
     return time.time() - t0
 ```
 
-Finally, we'd trigger the run locally. We also time this. Note that the first time we run this, it will build the image. This might take 1-2 min. When we run this subsequent times, the image is already build, and it will run much much faster.
+Finally, we'd trigger the run locally, which we time with `time.time() - t0`. 
+
+Observe that the first time we run this snippet, it will build the image. This might take 1-2 minutes. 
+
+But when we run this subsequent times, the image is already build, and it will run **much** faster. 
 
 ```python
 if __name__ == "__main__":
@@ -92,7 +96,7 @@ if __name__ == "__main__":
     print("Full time spent:", time.time() - t0)
 ```
 
-Let's now run it all:
+So let's run it:
 
 ```bash
 $ modal run import_sklearn.py 
@@ -160,11 +164,13 @@ Stopping app - local entrypoint completed.
 ✓ App completed. View run at https://modal.com/charlotte-llm/main/apps/ap-xxxxxxxxxx
 ```
 
-So from the above, it took `8.53s` to build the first image, `2.27s` to create the snapshot and `13.14s` to build the second image. But if we run this again, it'll be much faster than before as we've already.
+That took `8.53s` to build the first image, `2.27s` to create the snapshot and `13.14s` to build the second image. 
+
+But if we run this again, it'll be **much faster** than before as we've already.
 
 ## import_sklearn_r2.py
 
-Just for fun, let's modify this script to now output the R^2 value on the test data.
+Just for fun, let's modify this script to now output the $$R^2$$ value on the test data.
 
 ```{.python filename="import_sklearn_r2.py"}
 import time
@@ -220,7 +226,7 @@ Stopping app - local entrypoint completed.
 
 This result somewhat surprised me. 
 
-First, I didn't see the output R^2. I was expecting this perhaps the first time running, but didn't see it.
+First, I didn't see the output $$R^2$$. I was expecting this perhaps the first time running, but didn't see it.
 
 Second, after running, unlike the previous example that shut down immediately, this container was running ephemerally:
 
@@ -239,7 +245,7 @@ Stopping app - local entrypoint completed.
 ✓ App completed. View run at https://modal.com/charlotte-llm/main/apps/ap-xxxxxxxxxx
 ```
 
-This avoided the issue of perpetually running but didn't print the R^2 to console:
+This avoided the issue of perpetually running but didn't print the $$R^2$$ to console:
 
 ![](images/02_building_containers/sklearn-r2-2.png)
 
@@ -274,7 +280,7 @@ Stopping app - local entrypoint completed.
 ✓ App completed. View run at https://modal.com/charlotte-llm/main/apps/ap-xxxxxxxxxx
 ```
 
-It's important to mindful of scope of local vs. remote when using Modal. This will be an extended discussion we'll see in later examples.
+It's important to mindful of scope of local versus remote when using Modal. This will be an extended discussion we'll see in later examples.
 
 ## install_cuda.py
 

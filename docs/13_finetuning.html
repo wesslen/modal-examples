@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.5.49">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Ryan Wesslen">
 
-<title>Modal Examples - 13&nbsp; Finetuning</title>
+<title>13&nbsp; Finetuning – Modal Examples</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,7 +23,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -34,7 +34,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -81,7 +81,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -90,6 +96,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -105,13 +112,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./13_finetuning.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Finetuning</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./13_finetuning.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Finetuning</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -120,7 +127,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Modal Examples</a> 
@@ -214,7 +221,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -256,7 +263,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
+
 </header>
+
 
 <p>Unlike the previous chapters, this chapter uses a separate GitHub repo: <a href="https://github.com/modal-labs/llm-finetuning">github.com/modal-labs/llm-finetuning</a>. This example provides a SQL fine tuning example where the goal is to ask questions along with a SQL schema template and the model outputs a SQL query.</p>
 <p>For this, we’ll do a few passes. First this chapter, we’ll run the current code and explaining parts. But in the next Chapter, we’ll start a new extension of this for a custom problem.</p>
@@ -371,7 +380,7 @@ Warning
 <div class="code-with-filename-file">
 <pre><strong>train.py</strong></pre>
 </div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<div class="sourceCode" id="cb6" data-filename="train.py"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> secrets</span>
@@ -402,7 +411,7 @@ Warning
 <div class="code-with-filename-file">
 <pre><strong>common.py</strong></pre>
 </div>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<div class="sourceCode" id="cb7" data-filename="common.py"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> PurePosixPath</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Union</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -473,7 +482,7 @@ Warning
 <div class="code-with-filename-file">
 <pre><strong>train.py</strong></pre>
 </div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>GPU_CONFIG <span class="op">=</span> os.environ.get(<span class="st">"GPU_CONFIG"</span>, <span class="st">"a100:2"</span>)</span>
+<div class="sourceCode" id="cb8" data-filename="train.py"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>GPU_CONFIG <span class="op">=</span> os.environ.get(<span class="st">"GPU_CONFIG"</span>, <span class="st">"a100:2"</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">len</span>(GPU_CONFIG.split(<span class="st">":"</span>)) <span class="op">&lt;=</span> <span class="dv">1</span>:</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    N_GPUS <span class="op">=</span> <span class="bu">int</span>(os.environ.get(<span class="st">"N_GPUS"</span>, <span class="dv">2</span>))</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    GPU_CONFIG <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>GPU_CONFIG<span class="sc">}</span><span class="ss">:</span><span class="sc">{</span>N_GPUS<span class="sc">}</span><span class="ss">"</span></span>
@@ -492,7 +501,7 @@ Warning
 <div class="code-with-filename-file">
 <pre><strong>train.py</strong></pre>
 </div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.local_entrypoint</span>()</span>
+<div class="sourceCode" id="cb9" data-filename="train.py"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.local_entrypoint</span>()</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> main(</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    config: <span class="bu">str</span>,</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    data: <span class="bu">str</span>,</span>
@@ -527,7 +536,7 @@ Warning
 <div class="code-with-filename-file">
 <pre><strong>train.py</strong></pre>
 </div>
-<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.function</span>(image<span class="op">=</span>axolotl_image, timeout<span class="op">=</span><span class="dv">30</span> <span class="op">*</span> MINUTES, volumes<span class="op">=</span>VOLUME_CONFIG)</span>
+<div class="sourceCode" id="cb10" data-filename="train.py"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.function</span>(image<span class="op">=</span>axolotl_image, timeout<span class="op">=</span><span class="dv">30</span> <span class="op">*</span> MINUTES, volumes<span class="op">=</span>VOLUME_CONFIG)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> launch(config_raw: <span class="bu">dict</span>, data_raw: <span class="bu">str</span>, run_to_resume: <span class="bu">str</span>, preproc_only: <span class="bu">bool</span>):</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> yaml</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> huggingface_hub <span class="im">import</span> snapshot_download</span>
@@ -594,7 +603,7 @@ Warning
 <div class="code-with-filename-file">
 <pre><strong>train.py</strong></pre>
 </div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a></span>
+<div class="sourceCode" id="cb11" data-filename="train.py"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="at">@app.function</span>(</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    image<span class="op">=</span>axolotl_image,</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    gpu<span class="op">=</span>GPU_CONFIG,</span>
@@ -629,7 +638,7 @@ Warning
 <div class="code-with-filename-file">
 <pre><strong>pythia.yml</strong></pre>
 </div>
-<div class="sourceCode" id="cb12"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lightweight example of training a small Pythia model for simple demonstrations</span></span>
+<div class="sourceCode" id="cb12" data-filename="pythia.yml"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lightweight example of training a small Pythia model for simple demonstrations</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">base_model</span><span class="kw">:</span><span class="at"> EleutherAI/pythia-1.4b-deduped</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">load_in_8bit</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span><span class="co"> # pythia is small, so keep it in 16-bit precision</span></span>
@@ -640,7 +649,7 @@ Warning
 <div class="code-with-filename-file">
 <pre><strong>pythia.yml</strong></pre>
 </div>
-<div class="sourceCode" id="cb13"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">datasets</span><span class="kw">:</span></span>
+<div class="sourceCode" id="cb13" data-filename="pythia.yml"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">datasets</span><span class="kw">:</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">  # This will be the path used for the data when it is saved to the Volume in the cloud.</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> data.jsonl</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ds_type</span><span class="kw">:</span><span class="at"> json</span></span>
@@ -675,14 +684,14 @@ How to add custom prompt format
 <div class="code-with-filename-file">
 <pre><strong>data.jsonl</strong></pre>
 </div>
-<div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>{<span class="st">"input"</span>: <span class="st">"..."</span>, <span class="st">"output"</span>: <span class="st">"..."</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb14" data-filename="data.jsonl"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>{<span class="st">"input"</span>: <span class="st">"..."</span>, <span class="st">"output"</span>: <span class="st">"..."</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>You can use this example in your YAML config:</p>
 <div class="code-with-filename">
 <div class="code-with-filename-file">
 <pre><strong>config.yaml</strong></pre>
 </div>
-<div class="sourceCode" id="cb15"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">datasets</span><span class="kw">:</span></span>
+<div class="sourceCode" id="cb15" data-filename="config.yaml"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">datasets</span><span class="kw">:</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> repo</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">system_prompt</span><span class="kw">:</span><span class="at"> </span><span class="st">""</span></span>
@@ -700,7 +709,7 @@ How to add custom prompt format
 <div class="code-with-filename-file">
 <pre><strong>pythia.yml</strong></pre>
 </div>
-<div class="sourceCode" id="cb16"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># add tokens</span></span>
+<div class="sourceCode" id="cb16" data-filename="pythia.yml"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># add tokens</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tokens</span><span class="kw">:</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"[INST]"</span></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">" [/INST]"</span></span>
@@ -725,7 +734,7 @@ How to add custom prompt format
 <div class="code-with-filename-file">
 <pre><strong>pythia.yml</strong></pre>
 </div>
-<div class="sourceCode" id="cb17"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">adapter</span><span class="kw">:</span><span class="at"> lora</span></span>
+<div class="sourceCode" id="cb17" data-filename="pythia.yml"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">adapter</span><span class="kw">:</span><span class="at"> lora</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lora_model_dir</span><span class="kw">:</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">lora_r</span><span class="kw">:</span><span class="at"> </span><span class="dv">16</span></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="fu">lora_alpha</span><span class="kw">:</span><span class="at"> </span><span class="dv">32</span></span>
@@ -898,18 +907,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -941,7 +939,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
   const viewSource = window.document.getElementById('quarto-view-source') ||
                      window.document.getElementById('quarto-code-tools-source');
   if (viewSource) {
@@ -993,10 +1013,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1006,8 +1043,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1019,7 +1065,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1063,6 +1232,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1088,6 +1258,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1149,7 +1345,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./12_datasets.html" class="pagination-link">
+      <a href="./12_datasets.html" class="pagination-link" aria-label="Datasets">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Datasets</span></span>
       </a>          
   </div>
@@ -1301,18 +1497,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb29-143"><a href="#cb29-143" aria-hidden="true" tabindex="-1"></a>First, let's look at the dependencies:</span>
 <span id="cb29-144"><a href="#cb29-144" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-145"><a href="#cb29-145" aria-hidden="true" tabindex="-1"></a><span class="in">```{.python filename="train.py"}</span></span>
-<span id="cb29-146"><a href="#cb29-146" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
-<span id="cb29-147"><a href="#cb29-147" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime</span>
-<span id="cb29-148"><a href="#cb29-148" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
-<span id="cb29-149"><a href="#cb29-149" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> secrets</span>
+<span id="cb29-146"><a href="#cb29-146" aria-hidden="true" tabindex="-1"></a><span class="in">import os</span></span>
+<span id="cb29-147"><a href="#cb29-147" aria-hidden="true" tabindex="-1"></a><span class="in">from datetime import datetime</span></span>
+<span id="cb29-148"><a href="#cb29-148" aria-hidden="true" tabindex="-1"></a><span class="in">from pathlib import Path</span></span>
+<span id="cb29-149"><a href="#cb29-149" aria-hidden="true" tabindex="-1"></a><span class="in">import secrets</span></span>
 <span id="cb29-150"><a href="#cb29-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-151"><a href="#cb29-151" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> .common <span class="im">import</span> (</span>
-<span id="cb29-152"><a href="#cb29-152" aria-hidden="true" tabindex="-1"></a>    app,</span>
-<span id="cb29-153"><a href="#cb29-153" aria-hidden="true" tabindex="-1"></a>    axolotl_image,</span>
-<span id="cb29-154"><a href="#cb29-154" aria-hidden="true" tabindex="-1"></a>    HOURS,</span>
-<span id="cb29-155"><a href="#cb29-155" aria-hidden="true" tabindex="-1"></a>    MINUTES,</span>
-<span id="cb29-156"><a href="#cb29-156" aria-hidden="true" tabindex="-1"></a>    VOLUME_CONFIG,</span>
-<span id="cb29-157"><a href="#cb29-157" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-151"><a href="#cb29-151" aria-hidden="true" tabindex="-1"></a><span class="in">from .common import (</span></span>
+<span id="cb29-152"><a href="#cb29-152" aria-hidden="true" tabindex="-1"></a><span class="in">    app,</span></span>
+<span id="cb29-153"><a href="#cb29-153" aria-hidden="true" tabindex="-1"></a><span class="in">    axolotl_image,</span></span>
+<span id="cb29-154"><a href="#cb29-154" aria-hidden="true" tabindex="-1"></a><span class="in">    HOURS,</span></span>
+<span id="cb29-155"><a href="#cb29-155" aria-hidden="true" tabindex="-1"></a><span class="in">    MINUTES,</span></span>
+<span id="cb29-156"><a href="#cb29-156" aria-hidden="true" tabindex="-1"></a><span class="in">    VOLUME_CONFIG,</span></span>
+<span id="cb29-157"><a href="#cb29-157" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
 <span id="cb29-158"><a href="#cb29-158" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb29-159"><a href="#cb29-159" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-160"><a href="#cb29-160" aria-hidden="true" tabindex="-1"></a><span class="fu">#### common.py</span></span>
@@ -1331,68 +1527,68 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb29-173"><a href="#cb29-173" aria-hidden="true" tabindex="-1"></a><span class="ss">8. </span>Configure the volumes where we'll save our logs and model</span>
 <span id="cb29-174"><a href="#cb29-174" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-175"><a href="#cb29-175" aria-hidden="true" tabindex="-1"></a><span class="in">```{.python filename="common.py"}</span></span>
-<span id="cb29-176"><a href="#cb29-176" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
-<span id="cb29-177"><a href="#cb29-177" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> PurePosixPath</span>
-<span id="cb29-178"><a href="#cb29-178" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Union</span>
+<span id="cb29-176"><a href="#cb29-176" aria-hidden="true" tabindex="-1"></a><span class="in">import os</span></span>
+<span id="cb29-177"><a href="#cb29-177" aria-hidden="true" tabindex="-1"></a><span class="in">from pathlib import PurePosixPath</span></span>
+<span id="cb29-178"><a href="#cb29-178" aria-hidden="true" tabindex="-1"></a><span class="in">from typing import Union</span></span>
 <span id="cb29-179"><a href="#cb29-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-180"><a href="#cb29-180" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> modal</span>
+<span id="cb29-180"><a href="#cb29-180" aria-hidden="true" tabindex="-1"></a><span class="in">import modal</span></span>
 <span id="cb29-181"><a href="#cb29-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-182"><a href="#cb29-182" aria-hidden="true" tabindex="-1"></a>APP_NAME <span class="op">=</span> <span class="st">"example-axolotl"</span></span>
+<span id="cb29-182"><a href="#cb29-182" aria-hidden="true" tabindex="-1"></a><span class="in">APP_NAME = "example-axolotl"</span></span>
 <span id="cb29-183"><a href="#cb29-183" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-184"><a href="#cb29-184" aria-hidden="true" tabindex="-1"></a>MINUTES <span class="op">=</span> <span class="dv">60</span>  <span class="co"># seconds</span></span>
-<span id="cb29-185"><a href="#cb29-185" aria-hidden="true" tabindex="-1"></a>HOURS <span class="op">=</span> <span class="dv">60</span> <span class="op">*</span> MINUTES</span>
+<span id="cb29-184"><a href="#cb29-184" aria-hidden="true" tabindex="-1"></a><span class="in">MINUTES = 60  # seconds</span></span>
+<span id="cb29-185"><a href="#cb29-185" aria-hidden="true" tabindex="-1"></a><span class="in">HOURS = 60 * MINUTES</span></span>
 <span id="cb29-186"><a href="#cb29-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-187"><a href="#cb29-187" aria-hidden="true" tabindex="-1"></a><span class="co"># Axolotl image hash corresponding to main-20240522-py3.11-cu121-2.2.2</span></span>
-<span id="cb29-188"><a href="#cb29-188" aria-hidden="true" tabindex="-1"></a>AXOLOTL_REGISTRY_SHA <span class="op">=</span> (</span>
-<span id="cb29-189"><a href="#cb29-189" aria-hidden="true" tabindex="-1"></a>    <span class="st">"8ec2116dd36ecb9fb23702278ac612f27c1d4309eca86ad0afd3a3fe4a80ad5b"</span></span>
-<span id="cb29-190"><a href="#cb29-190" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-187"><a href="#cb29-187" aria-hidden="true" tabindex="-1"></a><span class="in"># Axolotl image hash corresponding to main-20240522-py3.11-cu121-2.2.2</span></span>
+<span id="cb29-188"><a href="#cb29-188" aria-hidden="true" tabindex="-1"></a><span class="in">AXOLOTL_REGISTRY_SHA = (</span></span>
+<span id="cb29-189"><a href="#cb29-189" aria-hidden="true" tabindex="-1"></a><span class="in">    "8ec2116dd36ecb9fb23702278ac612f27c1d4309eca86ad0afd3a3fe4a80ad5b"</span></span>
+<span id="cb29-190"><a href="#cb29-190" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
 <span id="cb29-191"><a href="#cb29-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-192"><a href="#cb29-192" aria-hidden="true" tabindex="-1"></a>ALLOW_WANDB <span class="op">=</span> os.environ.get(<span class="st">"ALLOW_WANDB"</span>, <span class="st">"false"</span>).lower() <span class="op">==</span> <span class="st">"true"</span></span>
+<span id="cb29-192"><a href="#cb29-192" aria-hidden="true" tabindex="-1"></a><span class="in">ALLOW_WANDB = os.environ.get("ALLOW_WANDB", "false").lower() == "true"</span></span>
 <span id="cb29-193"><a href="#cb29-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-194"><a href="#cb29-194" aria-hidden="true" tabindex="-1"></a>axolotl_image <span class="op">=</span> (</span>
-<span id="cb29-195"><a href="#cb29-195" aria-hidden="true" tabindex="-1"></a>    modal.Image.from_registry(<span class="ss">f"winglian/axolotl@sha256:</span><span class="sc">{</span>AXOLOTL_REGISTRY_SHA<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb29-196"><a href="#cb29-196" aria-hidden="true" tabindex="-1"></a>    .pip_install(</span>
-<span id="cb29-197"><a href="#cb29-197" aria-hidden="true" tabindex="-1"></a>        <span class="st">"huggingface_hub==0.20.3"</span>,</span>
-<span id="cb29-198"><a href="#cb29-198" aria-hidden="true" tabindex="-1"></a>        <span class="st">"hf-transfer==0.1.5"</span>,</span>
-<span id="cb29-199"><a href="#cb29-199" aria-hidden="true" tabindex="-1"></a>        <span class="st">"wandb==0.16.3"</span>,</span>
-<span id="cb29-200"><a href="#cb29-200" aria-hidden="true" tabindex="-1"></a>        <span class="st">"fastapi==0.110.0"</span>,</span>
-<span id="cb29-201"><a href="#cb29-201" aria-hidden="true" tabindex="-1"></a>        <span class="st">"pydantic==2.6.3"</span>,</span>
-<span id="cb29-202"><a href="#cb29-202" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb29-203"><a href="#cb29-203" aria-hidden="true" tabindex="-1"></a>    .env(</span>
-<span id="cb29-204"><a href="#cb29-204" aria-hidden="true" tabindex="-1"></a>        <span class="bu">dict</span>(</span>
-<span id="cb29-205"><a href="#cb29-205" aria-hidden="true" tabindex="-1"></a>            HUGGINGFACE_HUB_CACHE<span class="op">=</span><span class="st">"/pretrained"</span>,</span>
-<span id="cb29-206"><a href="#cb29-206" aria-hidden="true" tabindex="-1"></a>            HF_HUB_ENABLE_HF_TRANSFER<span class="op">=</span><span class="st">"1"</span>,</span>
-<span id="cb29-207"><a href="#cb29-207" aria-hidden="true" tabindex="-1"></a>            TQDM_DISABLE<span class="op">=</span><span class="st">"true"</span>,</span>
-<span id="cb29-208"><a href="#cb29-208" aria-hidden="true" tabindex="-1"></a>            AXOLOTL_NCCL_TIMEOUT<span class="op">=</span><span class="st">"60"</span>,</span>
-<span id="cb29-209"><a href="#cb29-209" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb29-210"><a href="#cb29-210" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb29-211"><a href="#cb29-211" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-194"><a href="#cb29-194" aria-hidden="true" tabindex="-1"></a><span class="in">axolotl_image = (</span></span>
+<span id="cb29-195"><a href="#cb29-195" aria-hidden="true" tabindex="-1"></a><span class="in">    modal.Image.from_registry(f"winglian/axolotl@sha256:{AXOLOTL_REGISTRY_SHA}")</span></span>
+<span id="cb29-196"><a href="#cb29-196" aria-hidden="true" tabindex="-1"></a><span class="in">    .pip_install(</span></span>
+<span id="cb29-197"><a href="#cb29-197" aria-hidden="true" tabindex="-1"></a><span class="in">        "huggingface_hub==0.20.3",</span></span>
+<span id="cb29-198"><a href="#cb29-198" aria-hidden="true" tabindex="-1"></a><span class="in">        "hf-transfer==0.1.5",</span></span>
+<span id="cb29-199"><a href="#cb29-199" aria-hidden="true" tabindex="-1"></a><span class="in">        "wandb==0.16.3",</span></span>
+<span id="cb29-200"><a href="#cb29-200" aria-hidden="true" tabindex="-1"></a><span class="in">        "fastapi==0.110.0",</span></span>
+<span id="cb29-201"><a href="#cb29-201" aria-hidden="true" tabindex="-1"></a><span class="in">        "pydantic==2.6.3",</span></span>
+<span id="cb29-202"><a href="#cb29-202" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb29-203"><a href="#cb29-203" aria-hidden="true" tabindex="-1"></a><span class="in">    .env(</span></span>
+<span id="cb29-204"><a href="#cb29-204" aria-hidden="true" tabindex="-1"></a><span class="in">        dict(</span></span>
+<span id="cb29-205"><a href="#cb29-205" aria-hidden="true" tabindex="-1"></a><span class="in">            HUGGINGFACE_HUB_CACHE="/pretrained",</span></span>
+<span id="cb29-206"><a href="#cb29-206" aria-hidden="true" tabindex="-1"></a><span class="in">            HF_HUB_ENABLE_HF_TRANSFER="1",</span></span>
+<span id="cb29-207"><a href="#cb29-207" aria-hidden="true" tabindex="-1"></a><span class="in">            TQDM_DISABLE="true",</span></span>
+<span id="cb29-208"><a href="#cb29-208" aria-hidden="true" tabindex="-1"></a><span class="in">            AXOLOTL_NCCL_TIMEOUT="60",</span></span>
+<span id="cb29-209"><a href="#cb29-209" aria-hidden="true" tabindex="-1"></a><span class="in">        )</span></span>
+<span id="cb29-210"><a href="#cb29-210" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb29-211"><a href="#cb29-211" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
 <span id="cb29-212"><a href="#cb29-212" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-213"><a href="#cb29-213" aria-hidden="true" tabindex="-1"></a>vllm_image <span class="op">=</span> modal.Image.from_registry(</span>
-<span id="cb29-214"><a href="#cb29-214" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nvidia/cuda:12.1.0-base-ubuntu22.04"</span>, add_python<span class="op">=</span><span class="st">"3.10"</span></span>
-<span id="cb29-215"><a href="#cb29-215" aria-hidden="true" tabindex="-1"></a>).pip_install(</span>
-<span id="cb29-216"><a href="#cb29-216" aria-hidden="true" tabindex="-1"></a>    <span class="st">"vllm==0.2.6"</span>,</span>
-<span id="cb29-217"><a href="#cb29-217" aria-hidden="true" tabindex="-1"></a>    <span class="st">"torch==2.1.2"</span>,</span>
-<span id="cb29-218"><a href="#cb29-218" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-213"><a href="#cb29-213" aria-hidden="true" tabindex="-1"></a><span class="in">vllm_image = modal.Image.from_registry(</span></span>
+<span id="cb29-214"><a href="#cb29-214" aria-hidden="true" tabindex="-1"></a><span class="in">    "nvidia/cuda:12.1.0-base-ubuntu22.04", add_python="3.10"</span></span>
+<span id="cb29-215"><a href="#cb29-215" aria-hidden="true" tabindex="-1"></a><span class="in">).pip_install(</span></span>
+<span id="cb29-216"><a href="#cb29-216" aria-hidden="true" tabindex="-1"></a><span class="in">    "vllm==0.2.6",</span></span>
+<span id="cb29-217"><a href="#cb29-217" aria-hidden="true" tabindex="-1"></a><span class="in">    "torch==2.1.2",</span></span>
+<span id="cb29-218"><a href="#cb29-218" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
 <span id="cb29-219"><a href="#cb29-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-220"><a href="#cb29-220" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> modal.App(</span>
-<span id="cb29-221"><a href="#cb29-221" aria-hidden="true" tabindex="-1"></a>    APP_NAME,</span>
-<span id="cb29-222"><a href="#cb29-222" aria-hidden="true" tabindex="-1"></a>    secrets<span class="op">=</span>[</span>
-<span id="cb29-223"><a href="#cb29-223" aria-hidden="true" tabindex="-1"></a>        modal.Secret.from_name(<span class="st">"huggingface"</span>),</span>
-<span id="cb29-224"><a href="#cb29-224" aria-hidden="true" tabindex="-1"></a>        modal.Secret.from_dict({<span class="st">"ALLOW_WANDB"</span>: os.environ.get(<span class="st">"ALLOW_WANDB"</span>, <span class="st">"false"</span>)}),</span>
-<span id="cb29-225"><a href="#cb29-225" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span>([modal.Secret.from_name(<span class="st">"wandb"</span>)] <span class="cf">if</span> ALLOW_WANDB <span class="cf">else</span> []),</span>
-<span id="cb29-226"><a href="#cb29-226" aria-hidden="true" tabindex="-1"></a>    ],</span>
-<span id="cb29-227"><a href="#cb29-227" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-220"><a href="#cb29-220" aria-hidden="true" tabindex="-1"></a><span class="in">app = modal.App(</span></span>
+<span id="cb29-221"><a href="#cb29-221" aria-hidden="true" tabindex="-1"></a><span class="in">    APP_NAME,</span></span>
+<span id="cb29-222"><a href="#cb29-222" aria-hidden="true" tabindex="-1"></a><span class="in">    secrets=[</span></span>
+<span id="cb29-223"><a href="#cb29-223" aria-hidden="true" tabindex="-1"></a><span class="in">        modal.Secret.from_name("huggingface"),</span></span>
+<span id="cb29-224"><a href="#cb29-224" aria-hidden="true" tabindex="-1"></a><span class="in">        modal.Secret.from_dict({"ALLOW_WANDB": os.environ.get("ALLOW_WANDB", "false")}),</span></span>
+<span id="cb29-225"><a href="#cb29-225" aria-hidden="true" tabindex="-1"></a><span class="in">        *([modal.Secret.from_name("wandb")] if ALLOW_WANDB else []),</span></span>
+<span id="cb29-226"><a href="#cb29-226" aria-hidden="true" tabindex="-1"></a><span class="in">    ],</span></span>
+<span id="cb29-227"><a href="#cb29-227" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
 <span id="cb29-228"><a href="#cb29-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-229"><a href="#cb29-229" aria-hidden="true" tabindex="-1"></a><span class="co"># Volumes for pre-trained models and training runs.</span></span>
-<span id="cb29-230"><a href="#cb29-230" aria-hidden="true" tabindex="-1"></a>pretrained_volume <span class="op">=</span> modal.Volume.from_name(</span>
-<span id="cb29-231"><a href="#cb29-231" aria-hidden="true" tabindex="-1"></a>    <span class="st">"example-pretrained-vol"</span>, create_if_missing<span class="op">=</span><span class="va">True</span></span>
-<span id="cb29-232"><a href="#cb29-232" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb29-233"><a href="#cb29-233" aria-hidden="true" tabindex="-1"></a>runs_volume <span class="op">=</span> modal.Volume.from_name(<span class="st">"example-runs-vol"</span>, create_if_missing<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb29-234"><a href="#cb29-234" aria-hidden="true" tabindex="-1"></a>VOLUME_CONFIG: <span class="bu">dict</span>[Union[<span class="bu">str</span>, PurePosixPath], modal.Volume] <span class="op">=</span> {</span>
-<span id="cb29-235"><a href="#cb29-235" aria-hidden="true" tabindex="-1"></a>    <span class="st">"/pretrained"</span>: pretrained_volume,</span>
-<span id="cb29-236"><a href="#cb29-236" aria-hidden="true" tabindex="-1"></a>    <span class="st">"/runs"</span>: runs_volume,</span>
-<span id="cb29-237"><a href="#cb29-237" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-229"><a href="#cb29-229" aria-hidden="true" tabindex="-1"></a><span class="in"># Volumes for pre-trained models and training runs.</span></span>
+<span id="cb29-230"><a href="#cb29-230" aria-hidden="true" tabindex="-1"></a><span class="in">pretrained_volume = modal.Volume.from_name(</span></span>
+<span id="cb29-231"><a href="#cb29-231" aria-hidden="true" tabindex="-1"></a><span class="in">    "example-pretrained-vol", create_if_missing=True</span></span>
+<span id="cb29-232"><a href="#cb29-232" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb29-233"><a href="#cb29-233" aria-hidden="true" tabindex="-1"></a><span class="in">runs_volume = modal.Volume.from_name("example-runs-vol", create_if_missing=True)</span></span>
+<span id="cb29-234"><a href="#cb29-234" aria-hidden="true" tabindex="-1"></a><span class="in">VOLUME_CONFIG: dict[Union[str, PurePosixPath], modal.Volume] = {</span></span>
+<span id="cb29-235"><a href="#cb29-235" aria-hidden="true" tabindex="-1"></a><span class="in">    "/pretrained": pretrained_volume,</span></span>
+<span id="cb29-236"><a href="#cb29-236" aria-hidden="true" tabindex="-1"></a><span class="in">    "/runs": runs_volume,</span></span>
+<span id="cb29-237"><a href="#cb29-237" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
 <span id="cb29-238"><a href="#cb29-238" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb29-239"><a href="#cb29-239" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-240"><a href="#cb29-240" aria-hidden="true" tabindex="-1"></a><span class="fu">#### train.py</span></span>
@@ -1400,11 +1596,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb29-242"><a href="#cb29-242" aria-hidden="true" tabindex="-1"></a>Let's now get back to the <span class="in">`train.py`</span> script (after loading dependencies). Before getting to the <span class="in">`main()`</span> function, at the top of the script we find:</span>
 <span id="cb29-243"><a href="#cb29-243" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-244"><a href="#cb29-244" aria-hidden="true" tabindex="-1"></a><span class="in">```{.python filename="train.py"}</span></span>
-<span id="cb29-245"><a href="#cb29-245" aria-hidden="true" tabindex="-1"></a>GPU_CONFIG <span class="op">=</span> os.environ.get(<span class="st">"GPU_CONFIG"</span>, <span class="st">"a100:2"</span>)</span>
-<span id="cb29-246"><a href="#cb29-246" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">len</span>(GPU_CONFIG.split(<span class="st">":"</span>)) <span class="op">&lt;=</span> <span class="dv">1</span>:</span>
-<span id="cb29-247"><a href="#cb29-247" aria-hidden="true" tabindex="-1"></a>    N_GPUS <span class="op">=</span> <span class="bu">int</span>(os.environ.get(<span class="st">"N_GPUS"</span>, <span class="dv">2</span>))</span>
-<span id="cb29-248"><a href="#cb29-248" aria-hidden="true" tabindex="-1"></a>    GPU_CONFIG <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>GPU_CONFIG<span class="sc">}</span><span class="ss">:</span><span class="sc">{</span>N_GPUS<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb29-249"><a href="#cb29-249" aria-hidden="true" tabindex="-1"></a>SINGLE_GPU_CONFIG <span class="op">=</span> os.environ.get(<span class="st">"GPU_CONFIG"</span>, <span class="st">"a10g:1"</span>)</span>
+<span id="cb29-245"><a href="#cb29-245" aria-hidden="true" tabindex="-1"></a><span class="in">GPU_CONFIG = os.environ.get("GPU_CONFIG", "a100:2")</span></span>
+<span id="cb29-246"><a href="#cb29-246" aria-hidden="true" tabindex="-1"></a><span class="in">if len(GPU_CONFIG.split(":")) &lt;= 1:</span></span>
+<span id="cb29-247"><a href="#cb29-247" aria-hidden="true" tabindex="-1"></a><span class="in">    N_GPUS = int(os.environ.get("N_GPUS", 2))</span></span>
+<span id="cb29-248"><a href="#cb29-248" aria-hidden="true" tabindex="-1"></a><span class="in">    GPU_CONFIG = f"{GPU_CONFIG}:{N_GPUS}"</span></span>
+<span id="cb29-249"><a href="#cb29-249" aria-hidden="true" tabindex="-1"></a><span class="in">SINGLE_GPU_CONFIG = os.environ.get("GPU_CONFIG", "a10g:1")</span></span>
 <span id="cb29-250"><a href="#cb29-250" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb29-251"><a href="#cb29-251" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-252"><a href="#cb29-252" aria-hidden="true" tabindex="-1"></a>This code configures GPU settings by retrieving the <span class="in">`GPU_CONFIG`</span> environment variable, defaulting to "a100:2" if unset, and ensures it contains a specified GPU type and count format. If the format is incorrect (missing the count), it fetches a default count from <span class="in">`N_GPUS`</span> or sets it to 2, then updates <span class="in">`GPU_CONFIG`</span> accordingly.</span>
@@ -1418,130 +1614,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb29-260"><a href="#cb29-260" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span><span class="in">`run_to_resume`</span> (optional): A <span class="in">`str`</span> of a previous run to resume</span>
 <span id="cb29-261"><a href="#cb29-261" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-262"><a href="#cb29-262" aria-hidden="true" tabindex="-1"></a><span class="in">```{.python filename="train.py"}</span></span>
-<span id="cb29-263"><a href="#cb29-263" aria-hidden="true" tabindex="-1"></a><span class="at">@app.local_entrypoint</span>()</span>
-<span id="cb29-264"><a href="#cb29-264" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> main(</span>
-<span id="cb29-265"><a href="#cb29-265" aria-hidden="true" tabindex="-1"></a>    config: <span class="bu">str</span>,</span>
-<span id="cb29-266"><a href="#cb29-266" aria-hidden="true" tabindex="-1"></a>    data: <span class="bu">str</span>,</span>
-<span id="cb29-267"><a href="#cb29-267" aria-hidden="true" tabindex="-1"></a>    merge_lora: <span class="bu">bool</span> <span class="op">=</span> <span class="va">True</span>,</span>
-<span id="cb29-268"><a href="#cb29-268" aria-hidden="true" tabindex="-1"></a>    preproc_only: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
-<span id="cb29-269"><a href="#cb29-269" aria-hidden="true" tabindex="-1"></a>    run_to_resume: <span class="bu">str</span> <span class="op">=</span> <span class="va">None</span>,</span>
-<span id="cb29-270"><a href="#cb29-270" aria-hidden="true" tabindex="-1"></a>):</span>
-<span id="cb29-271"><a href="#cb29-271" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Read config and data source files and pass their contents to the remote function.</span></span>
-<span id="cb29-272"><a href="#cb29-272" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(config, <span class="st">"r"</span>) <span class="im">as</span> cfg, <span class="bu">open</span>(data, <span class="st">"r"</span>) <span class="im">as</span> dat:</span>
-<span id="cb29-273"><a href="#cb29-273" aria-hidden="true" tabindex="-1"></a>        run_name, launch_handle <span class="op">=</span> launch.remote(</span>
-<span id="cb29-274"><a href="#cb29-274" aria-hidden="true" tabindex="-1"></a>            cfg.read(), dat.read(), run_to_resume, preproc_only</span>
-<span id="cb29-275"><a href="#cb29-275" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb29-263"><a href="#cb29-263" aria-hidden="true" tabindex="-1"></a><span class="in">@app.local_entrypoint()</span></span>
+<span id="cb29-264"><a href="#cb29-264" aria-hidden="true" tabindex="-1"></a><span class="in">def main(</span></span>
+<span id="cb29-265"><a href="#cb29-265" aria-hidden="true" tabindex="-1"></a><span class="in">    config: str,</span></span>
+<span id="cb29-266"><a href="#cb29-266" aria-hidden="true" tabindex="-1"></a><span class="in">    data: str,</span></span>
+<span id="cb29-267"><a href="#cb29-267" aria-hidden="true" tabindex="-1"></a><span class="in">    merge_lora: bool = True,</span></span>
+<span id="cb29-268"><a href="#cb29-268" aria-hidden="true" tabindex="-1"></a><span class="in">    preproc_only: bool = False,</span></span>
+<span id="cb29-269"><a href="#cb29-269" aria-hidden="true" tabindex="-1"></a><span class="in">    run_to_resume: str = None,</span></span>
+<span id="cb29-270"><a href="#cb29-270" aria-hidden="true" tabindex="-1"></a><span class="in">):</span></span>
+<span id="cb29-271"><a href="#cb29-271" aria-hidden="true" tabindex="-1"></a><span class="in">    # Read config and data source files and pass their contents to the remote function.</span></span>
+<span id="cb29-272"><a href="#cb29-272" aria-hidden="true" tabindex="-1"></a><span class="in">    with open(config, "r") as cfg, open(data, "r") as dat:</span></span>
+<span id="cb29-273"><a href="#cb29-273" aria-hidden="true" tabindex="-1"></a><span class="in">        run_name, launch_handle = launch.remote(</span></span>
+<span id="cb29-274"><a href="#cb29-274" aria-hidden="true" tabindex="-1"></a><span class="in">            cfg.read(), dat.read(), run_to_resume, preproc_only</span></span>
+<span id="cb29-275"><a href="#cb29-275" aria-hidden="true" tabindex="-1"></a><span class="in">        )</span></span>
 <span id="cb29-276"><a href="#cb29-276" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-277"><a href="#cb29-277" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Write a local reference to the location on the remote volume with the run</span></span>
-<span id="cb29-278"><a href="#cb29-278" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="st">".last_run_name"</span>, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
-<span id="cb29-279"><a href="#cb29-279" aria-hidden="true" tabindex="-1"></a>        f.write(run_name)</span>
+<span id="cb29-277"><a href="#cb29-277" aria-hidden="true" tabindex="-1"></a><span class="in">    # Write a local reference to the location on the remote volume with the run</span></span>
+<span id="cb29-278"><a href="#cb29-278" aria-hidden="true" tabindex="-1"></a><span class="in">    with open(".last_run_name", "w") as f:</span></span>
+<span id="cb29-279"><a href="#cb29-279" aria-hidden="true" tabindex="-1"></a><span class="in">        f.write(run_name)</span></span>
 <span id="cb29-280"><a href="#cb29-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-281"><a href="#cb29-281" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Wait for the training run to finish.</span></span>
-<span id="cb29-282"><a href="#cb29-282" aria-hidden="true" tabindex="-1"></a>    merge_handle <span class="op">=</span> launch_handle.get()</span>
-<span id="cb29-283"><a href="#cb29-283" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> merge_lora <span class="kw">and</span> <span class="kw">not</span> preproc_only:</span>
-<span id="cb29-284"><a href="#cb29-284" aria-hidden="true" tabindex="-1"></a>        merge_handle.get()</span>
+<span id="cb29-281"><a href="#cb29-281" aria-hidden="true" tabindex="-1"></a><span class="in">    # Wait for the training run to finish.</span></span>
+<span id="cb29-282"><a href="#cb29-282" aria-hidden="true" tabindex="-1"></a><span class="in">    merge_handle = launch_handle.get()</span></span>
+<span id="cb29-283"><a href="#cb29-283" aria-hidden="true" tabindex="-1"></a><span class="in">    if merge_lora and not preproc_only:</span></span>
+<span id="cb29-284"><a href="#cb29-284" aria-hidden="true" tabindex="-1"></a><span class="in">        merge_handle.get()</span></span>
 <span id="cb29-285"><a href="#cb29-285" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-286"><a href="#cb29-286" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Run complete. Tag: </span><span class="sc">{</span>run_name<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb29-287"><a href="#cb29-287" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"To inspect outputs, run `modal volume ls example-runs-vol </span><span class="sc">{</span>run_name<span class="sc">}</span><span class="ss">`"</span>)</span>
-<span id="cb29-288"><a href="#cb29-288" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> preproc_only:</span>
-<span id="cb29-289"><a href="#cb29-289" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(</span>
-<span id="cb29-290"><a href="#cb29-290" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"To run sample inference, run `modal run -q src.inference --run-name </span><span class="sc">{</span>run_name<span class="sc">}</span><span class="ss">`"</span></span>
-<span id="cb29-291"><a href="#cb29-291" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb29-286"><a href="#cb29-286" aria-hidden="true" tabindex="-1"></a><span class="in">    print(f"Run complete. Tag: {run_name}")</span></span>
+<span id="cb29-287"><a href="#cb29-287" aria-hidden="true" tabindex="-1"></a><span class="in">    print(f"To inspect outputs, run `modal volume ls example-runs-vol {run_name}`")</span></span>
+<span id="cb29-288"><a href="#cb29-288" aria-hidden="true" tabindex="-1"></a><span class="in">    if not preproc_only:</span></span>
+<span id="cb29-289"><a href="#cb29-289" aria-hidden="true" tabindex="-1"></a><span class="in">        print(</span></span>
+<span id="cb29-290"><a href="#cb29-290" aria-hidden="true" tabindex="-1"></a><span class="in">            f"To run sample inference, run `modal run -q src.inference --run-name {run_name}`"</span></span>
+<span id="cb29-291"><a href="#cb29-291" aria-hidden="true" tabindex="-1"></a><span class="in">        )</span></span>
 <span id="cb29-292"><a href="#cb29-292" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb29-293"><a href="#cb29-293" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-294"><a href="#cb29-294" aria-hidden="true" tabindex="-1"></a>Then after loading the config and data, the <span class="in">`launch`</span> function is run remotely. As shown below, the <span class="in">`launch`</span> function downloads the base model from HF Hub, sets the run timestamp (or sets it from a previous run), saves config and data files to the volumes, then kicks off training by running <span class="in">`train.spawn`</span>.</span>
 <span id="cb29-295"><a href="#cb29-295" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-296"><a href="#cb29-296" aria-hidden="true" tabindex="-1"></a><span class="in">```{.python filename="train.py"}</span></span>
-<span id="cb29-297"><a href="#cb29-297" aria-hidden="true" tabindex="-1"></a><span class="at">@app.function</span>(image<span class="op">=</span>axolotl_image, timeout<span class="op">=</span><span class="dv">30</span> <span class="op">*</span> MINUTES, volumes<span class="op">=</span>VOLUME_CONFIG)</span>
-<span id="cb29-298"><a href="#cb29-298" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> launch(config_raw: <span class="bu">dict</span>, data_raw: <span class="bu">str</span>, run_to_resume: <span class="bu">str</span>, preproc_only: <span class="bu">bool</span>):</span>
-<span id="cb29-299"><a href="#cb29-299" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> yaml</span>
-<span id="cb29-300"><a href="#cb29-300" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> huggingface_hub <span class="im">import</span> snapshot_download</span>
+<span id="cb29-297"><a href="#cb29-297" aria-hidden="true" tabindex="-1"></a><span class="in">@app.function(image=axolotl_image, timeout=30 * MINUTES, volumes=VOLUME_CONFIG)</span></span>
+<span id="cb29-298"><a href="#cb29-298" aria-hidden="true" tabindex="-1"></a><span class="in">def launch(config_raw: dict, data_raw: str, run_to_resume: str, preproc_only: bool):</span></span>
+<span id="cb29-299"><a href="#cb29-299" aria-hidden="true" tabindex="-1"></a><span class="in">    import yaml</span></span>
+<span id="cb29-300"><a href="#cb29-300" aria-hidden="true" tabindex="-1"></a><span class="in">    from huggingface_hub import snapshot_download</span></span>
 <span id="cb29-301"><a href="#cb29-301" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-302"><a href="#cb29-302" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Ensure the base model is downloaded</span></span>
-<span id="cb29-303"><a href="#cb29-303" aria-hidden="true" tabindex="-1"></a>    <span class="co"># </span><span class="al">TODO</span><span class="co">(gongy): test if this works with a path to previous fine-tune</span></span>
-<span id="cb29-304"><a href="#cb29-304" aria-hidden="true" tabindex="-1"></a>    config <span class="op">=</span> yaml.safe_load(config_raw)</span>
-<span id="cb29-305"><a href="#cb29-305" aria-hidden="true" tabindex="-1"></a>    model_name <span class="op">=</span> config[<span class="st">"base_model"</span>]</span>
+<span id="cb29-302"><a href="#cb29-302" aria-hidden="true" tabindex="-1"></a><span class="in">    # Ensure the base model is downloaded</span></span>
+<span id="cb29-303"><a href="#cb29-303" aria-hidden="true" tabindex="-1"></a><span class="in">    # TODO(gongy): test if this works with a path to previous fine-tune</span></span>
+<span id="cb29-304"><a href="#cb29-304" aria-hidden="true" tabindex="-1"></a><span class="in">    config = yaml.safe_load(config_raw)</span></span>
+<span id="cb29-305"><a href="#cb29-305" aria-hidden="true" tabindex="-1"></a><span class="in">    model_name = config["base_model"]</span></span>
 <span id="cb29-306"><a href="#cb29-306" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-307"><a href="#cb29-307" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
-<span id="cb29-308"><a href="#cb29-308" aria-hidden="true" tabindex="-1"></a>        snapshot_download(model_name, local_files_only<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb29-309"><a href="#cb29-309" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Volume contains </span><span class="sc">{</span>model_name<span class="sc">}</span><span class="ss">."</span>)</span>
-<span id="cb29-310"><a href="#cb29-310" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">FileNotFoundError</span>:</span>
-<span id="cb29-311"><a href="#cb29-311" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Downloading </span><span class="sc">{</span>model_name<span class="sc">}</span><span class="ss"> ..."</span>)</span>
-<span id="cb29-312"><a href="#cb29-312" aria-hidden="true" tabindex="-1"></a>        snapshot_download(model_name)</span>
+<span id="cb29-307"><a href="#cb29-307" aria-hidden="true" tabindex="-1"></a><span class="in">    try:</span></span>
+<span id="cb29-308"><a href="#cb29-308" aria-hidden="true" tabindex="-1"></a><span class="in">        snapshot_download(model_name, local_files_only=True)</span></span>
+<span id="cb29-309"><a href="#cb29-309" aria-hidden="true" tabindex="-1"></a><span class="in">        print(f"Volume contains {model_name}.")</span></span>
+<span id="cb29-310"><a href="#cb29-310" aria-hidden="true" tabindex="-1"></a><span class="in">    except FileNotFoundError:</span></span>
+<span id="cb29-311"><a href="#cb29-311" aria-hidden="true" tabindex="-1"></a><span class="in">        print(f"Downloading {model_name} ...")</span></span>
+<span id="cb29-312"><a href="#cb29-312" aria-hidden="true" tabindex="-1"></a><span class="in">        snapshot_download(model_name)</span></span>
 <span id="cb29-313"><a href="#cb29-313" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-314"><a href="#cb29-314" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Committing /pretrained directory (no progress bar) ..."</span>)</span>
-<span id="cb29-315"><a href="#cb29-315" aria-hidden="true" tabindex="-1"></a>        VOLUME_CONFIG[<span class="st">"/pretrained"</span>].commit()</span>
+<span id="cb29-314"><a href="#cb29-314" aria-hidden="true" tabindex="-1"></a><span class="in">        print("Committing /pretrained directory (no progress bar) ...")</span></span>
+<span id="cb29-315"><a href="#cb29-315" aria-hidden="true" tabindex="-1"></a><span class="in">        VOLUME_CONFIG["/pretrained"].commit()</span></span>
 <span id="cb29-316"><a href="#cb29-316" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-317"><a href="#cb29-317" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Write config and data into a training subfolder.</span></span>
-<span id="cb29-318"><a href="#cb29-318" aria-hidden="true" tabindex="-1"></a>    time_string <span class="op">=</span> datetime.now().strftime(<span class="st">"%Y-%m-</span><span class="sc">%d</span><span class="st">-%H-%M-%S"</span>)</span>
-<span id="cb29-319"><a href="#cb29-319" aria-hidden="true" tabindex="-1"></a>    run_name <span class="op">=</span> (</span>
-<span id="cb29-320"><a href="#cb29-320" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"axo-</span><span class="sc">{</span>time_string<span class="sc">}</span><span class="ss">-</span><span class="sc">{</span>secrets<span class="sc">.</span>token_hex(<span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb29-321"><a href="#cb29-321" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> run_to_resume</span>
-<span id="cb29-322"><a href="#cb29-322" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> run_to_resume</span>
-<span id="cb29-323"><a href="#cb29-323" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb29-324"><a href="#cb29-324" aria-hidden="true" tabindex="-1"></a>    run_folder <span class="op">=</span> <span class="ss">f"/runs/</span><span class="sc">{</span>run_name<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb29-325"><a href="#cb29-325" aria-hidden="true" tabindex="-1"></a>    os.makedirs(run_folder, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb29-317"><a href="#cb29-317" aria-hidden="true" tabindex="-1"></a><span class="in">    # Write config and data into a training subfolder.</span></span>
+<span id="cb29-318"><a href="#cb29-318" aria-hidden="true" tabindex="-1"></a><span class="in">    time_string = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")</span></span>
+<span id="cb29-319"><a href="#cb29-319" aria-hidden="true" tabindex="-1"></a><span class="in">    run_name = (</span></span>
+<span id="cb29-320"><a href="#cb29-320" aria-hidden="true" tabindex="-1"></a><span class="in">        f"axo-{time_string}-{secrets.token_hex(2)}"</span></span>
+<span id="cb29-321"><a href="#cb29-321" aria-hidden="true" tabindex="-1"></a><span class="in">        if not run_to_resume</span></span>
+<span id="cb29-322"><a href="#cb29-322" aria-hidden="true" tabindex="-1"></a><span class="in">        else run_to_resume</span></span>
+<span id="cb29-323"><a href="#cb29-323" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb29-324"><a href="#cb29-324" aria-hidden="true" tabindex="-1"></a><span class="in">    run_folder = f"/runs/{run_name}"</span></span>
+<span id="cb29-325"><a href="#cb29-325" aria-hidden="true" tabindex="-1"></a><span class="in">    os.makedirs(run_folder, exist_ok=True)</span></span>
 <span id="cb29-326"><a href="#cb29-326" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-327"><a href="#cb29-327" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Preparing training run in </span><span class="sc">{</span>run_folder<span class="sc">}</span><span class="ss">."</span>)</span>
-<span id="cb29-328"><a href="#cb29-328" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> (</span>
-<span id="cb29-329"><a href="#cb29-329" aria-hidden="true" tabindex="-1"></a>        <span class="bu">open</span>(<span class="ss">f"</span><span class="sc">{</span>run_folder<span class="sc">}</span><span class="ss">/config.yml"</span>, <span class="st">"w"</span>) <span class="im">as</span> config_file,</span>
-<span id="cb29-330"><a href="#cb29-330" aria-hidden="true" tabindex="-1"></a>        <span class="bu">open</span>(<span class="ss">f"</span><span class="sc">{</span>run_folder<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>config[<span class="st">'datasets'</span>][<span class="dv">0</span>][<span class="st">'path'</span>]<span class="sc">}</span><span class="ss">"</span>, <span class="st">"w"</span>) <span class="im">as</span> data_file,</span>
-<span id="cb29-331"><a href="#cb29-331" aria-hidden="true" tabindex="-1"></a>    ):</span>
-<span id="cb29-332"><a href="#cb29-332" aria-hidden="true" tabindex="-1"></a>        config_file.write(config_raw)</span>
-<span id="cb29-333"><a href="#cb29-333" aria-hidden="true" tabindex="-1"></a>        data_file.write(data_raw)</span>
-<span id="cb29-334"><a href="#cb29-334" aria-hidden="true" tabindex="-1"></a>    VOLUME_CONFIG[<span class="st">"/runs"</span>].commit()</span>
+<span id="cb29-327"><a href="#cb29-327" aria-hidden="true" tabindex="-1"></a><span class="in">    print(f"Preparing training run in {run_folder}.")</span></span>
+<span id="cb29-328"><a href="#cb29-328" aria-hidden="true" tabindex="-1"></a><span class="in">    with (</span></span>
+<span id="cb29-329"><a href="#cb29-329" aria-hidden="true" tabindex="-1"></a><span class="in">        open(f"{run_folder}/config.yml", "w") as config_file,</span></span>
+<span id="cb29-330"><a href="#cb29-330" aria-hidden="true" tabindex="-1"></a><span class="in">        open(f"{run_folder}/{config['datasets'][0]['path']}", "w") as data_file,</span></span>
+<span id="cb29-331"><a href="#cb29-331" aria-hidden="true" tabindex="-1"></a><span class="in">    ):</span></span>
+<span id="cb29-332"><a href="#cb29-332" aria-hidden="true" tabindex="-1"></a><span class="in">        config_file.write(config_raw)</span></span>
+<span id="cb29-333"><a href="#cb29-333" aria-hidden="true" tabindex="-1"></a><span class="in">        data_file.write(data_raw)</span></span>
+<span id="cb29-334"><a href="#cb29-334" aria-hidden="true" tabindex="-1"></a><span class="in">    VOLUME_CONFIG["/runs"].commit()</span></span>
 <span id="cb29-335"><a href="#cb29-335" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-336"><a href="#cb29-336" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> preproc_only:</span>
-<span id="cb29-337"><a href="#cb29-337" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Spawning container for data preprocessing."</span>)</span>
-<span id="cb29-338"><a href="#cb29-338" aria-hidden="true" tabindex="-1"></a>        launch_handle <span class="op">=</span> preproc_data.spawn(run_folder)</span>
-<span id="cb29-339"><a href="#cb29-339" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb29-340"><a href="#cb29-340" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Spawning container for data preprocessing."</span>)</span>
-<span id="cb29-341"><a href="#cb29-341" aria-hidden="true" tabindex="-1"></a>        preproc_handle <span class="op">=</span> preproc_data.spawn(run_folder)</span>
-<span id="cb29-342"><a href="#cb29-342" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> <span class="bu">open</span>(<span class="ss">f"</span><span class="sc">{</span>run_folder<span class="sc">}</span><span class="ss">/logs.txt"</span>, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
-<span id="cb29-343"><a href="#cb29-343" aria-hidden="true" tabindex="-1"></a>            lbl <span class="op">=</span> <span class="st">"preproc"</span></span>
-<span id="cb29-344"><a href="#cb29-344" aria-hidden="true" tabindex="-1"></a>            f.write(<span class="ss">f"</span><span class="sc">{</span>lbl<span class="sc">}</span><span class="ss">: https://modal.com/logs/call/</span><span class="sc">{</span>preproc_handle<span class="sc">.</span>object_id<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb29-345"><a href="#cb29-345" aria-hidden="true" tabindex="-1"></a>        <span class="co"># wait for preprocessing to finish.</span></span>
-<span id="cb29-346"><a href="#cb29-346" aria-hidden="true" tabindex="-1"></a>        preproc_handle.get()</span>
+<span id="cb29-336"><a href="#cb29-336" aria-hidden="true" tabindex="-1"></a><span class="in">    if preproc_only:</span></span>
+<span id="cb29-337"><a href="#cb29-337" aria-hidden="true" tabindex="-1"></a><span class="in">        print("Spawning container for data preprocessing.")</span></span>
+<span id="cb29-338"><a href="#cb29-338" aria-hidden="true" tabindex="-1"></a><span class="in">        launch_handle = preproc_data.spawn(run_folder)</span></span>
+<span id="cb29-339"><a href="#cb29-339" aria-hidden="true" tabindex="-1"></a><span class="in">    else:</span></span>
+<span id="cb29-340"><a href="#cb29-340" aria-hidden="true" tabindex="-1"></a><span class="in">        print("Spawning container for data preprocessing.")</span></span>
+<span id="cb29-341"><a href="#cb29-341" aria-hidden="true" tabindex="-1"></a><span class="in">        preproc_handle = preproc_data.spawn(run_folder)</span></span>
+<span id="cb29-342"><a href="#cb29-342" aria-hidden="true" tabindex="-1"></a><span class="in">        with open(f"{run_folder}/logs.txt", "w") as f:</span></span>
+<span id="cb29-343"><a href="#cb29-343" aria-hidden="true" tabindex="-1"></a><span class="in">            lbl = "preproc"</span></span>
+<span id="cb29-344"><a href="#cb29-344" aria-hidden="true" tabindex="-1"></a><span class="in">            f.write(f"{lbl}: https://modal.com/logs/call/{preproc_handle.object_id}")</span></span>
+<span id="cb29-345"><a href="#cb29-345" aria-hidden="true" tabindex="-1"></a><span class="in">        # wait for preprocessing to finish.</span></span>
+<span id="cb29-346"><a href="#cb29-346" aria-hidden="true" tabindex="-1"></a><span class="in">        preproc_handle.get()</span></span>
 <span id="cb29-347"><a href="#cb29-347" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-348"><a href="#cb29-348" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Start training run.</span></span>
-<span id="cb29-349"><a href="#cb29-349" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Spawning container for training."</span>)</span>
-<span id="cb29-350"><a href="#cb29-350" aria-hidden="true" tabindex="-1"></a>        launch_handle <span class="op">=</span> train.spawn(run_folder, config[<span class="st">"output_dir"</span>])</span>
+<span id="cb29-348"><a href="#cb29-348" aria-hidden="true" tabindex="-1"></a><span class="in">        # Start training run.</span></span>
+<span id="cb29-349"><a href="#cb29-349" aria-hidden="true" tabindex="-1"></a><span class="in">        print("Spawning container for training.")</span></span>
+<span id="cb29-350"><a href="#cb29-350" aria-hidden="true" tabindex="-1"></a><span class="in">        launch_handle = train.spawn(run_folder, config["output_dir"])</span></span>
 <span id="cb29-351"><a href="#cb29-351" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-352"><a href="#cb29-352" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="ss">f"</span><span class="sc">{</span>run_folder<span class="sc">}</span><span class="ss">/logs.txt"</span>, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
-<span id="cb29-353"><a href="#cb29-353" aria-hidden="true" tabindex="-1"></a>        lbl <span class="op">=</span> <span class="st">"train"</span> <span class="cf">if</span> <span class="kw">not</span> preproc_only <span class="cf">else</span> <span class="st">"preproc"</span></span>
-<span id="cb29-354"><a href="#cb29-354" aria-hidden="true" tabindex="-1"></a>        f.write(<span class="ss">f"</span><span class="sc">{</span>lbl<span class="sc">}</span><span class="ss">: https://modal.com/logs/call/</span><span class="sc">{</span>launch_handle<span class="sc">.</span>object_id<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb29-355"><a href="#cb29-355" aria-hidden="true" tabindex="-1"></a>    VOLUME_CONFIG[<span class="st">"/runs"</span>].commit()</span>
+<span id="cb29-352"><a href="#cb29-352" aria-hidden="true" tabindex="-1"></a><span class="in">    with open(f"{run_folder}/logs.txt", "w") as f:</span></span>
+<span id="cb29-353"><a href="#cb29-353" aria-hidden="true" tabindex="-1"></a><span class="in">        lbl = "train" if not preproc_only else "preproc"</span></span>
+<span id="cb29-354"><a href="#cb29-354" aria-hidden="true" tabindex="-1"></a><span class="in">        f.write(f"{lbl}: https://modal.com/logs/call/{launch_handle.object_id}")</span></span>
+<span id="cb29-355"><a href="#cb29-355" aria-hidden="true" tabindex="-1"></a><span class="in">    VOLUME_CONFIG["/runs"].commit()</span></span>
 <span id="cb29-356"><a href="#cb29-356" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-357"><a href="#cb29-357" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> run_name, launch_handle</span>
+<span id="cb29-357"><a href="#cb29-357" aria-hidden="true" tabindex="-1"></a><span class="in">    return run_name, launch_handle</span></span>
 <span id="cb29-358"><a href="#cb29-358" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb29-359"><a href="#cb29-359" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-360"><a href="#cb29-360" aria-hidden="true" tabindex="-1"></a>So last, let's examine the <span class="in">`train`</span> function:</span>
 <span id="cb29-361"><a href="#cb29-361" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-362"><a href="#cb29-362" aria-hidden="true" tabindex="-1"></a><span class="in">```{.python filename="train.py"}</span></span>
 <span id="cb29-363"><a href="#cb29-363" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-364"><a href="#cb29-364" aria-hidden="true" tabindex="-1"></a><span class="at">@app.function</span>(</span>
-<span id="cb29-365"><a href="#cb29-365" aria-hidden="true" tabindex="-1"></a>    image<span class="op">=</span>axolotl_image,</span>
-<span id="cb29-366"><a href="#cb29-366" aria-hidden="true" tabindex="-1"></a>    gpu<span class="op">=</span>GPU_CONFIG,</span>
-<span id="cb29-367"><a href="#cb29-367" aria-hidden="true" tabindex="-1"></a>    volumes<span class="op">=</span>VOLUME_CONFIG,</span>
-<span id="cb29-368"><a href="#cb29-368" aria-hidden="true" tabindex="-1"></a>    timeout<span class="op">=</span><span class="dv">24</span> <span class="op">*</span> HOURS,</span>
-<span id="cb29-369"><a href="#cb29-369" aria-hidden="true" tabindex="-1"></a>    _allow_background_volume_commits<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb29-370"><a href="#cb29-370" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb29-371"><a href="#cb29-371" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train(run_folder: <span class="bu">str</span>, output_dir: <span class="bu">str</span>):</span>
-<span id="cb29-372"><a href="#cb29-372" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> torch</span>
+<span id="cb29-364"><a href="#cb29-364" aria-hidden="true" tabindex="-1"></a><span class="in">@app.function(</span></span>
+<span id="cb29-365"><a href="#cb29-365" aria-hidden="true" tabindex="-1"></a><span class="in">    image=axolotl_image,</span></span>
+<span id="cb29-366"><a href="#cb29-366" aria-hidden="true" tabindex="-1"></a><span class="in">    gpu=GPU_CONFIG,</span></span>
+<span id="cb29-367"><a href="#cb29-367" aria-hidden="true" tabindex="-1"></a><span class="in">    volumes=VOLUME_CONFIG,</span></span>
+<span id="cb29-368"><a href="#cb29-368" aria-hidden="true" tabindex="-1"></a><span class="in">    timeout=24 * HOURS,</span></span>
+<span id="cb29-369"><a href="#cb29-369" aria-hidden="true" tabindex="-1"></a><span class="in">    _allow_background_volume_commits=True,</span></span>
+<span id="cb29-370"><a href="#cb29-370" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb29-371"><a href="#cb29-371" aria-hidden="true" tabindex="-1"></a><span class="in">def train(run_folder: str, output_dir: str):</span></span>
+<span id="cb29-372"><a href="#cb29-372" aria-hidden="true" tabindex="-1"></a><span class="in">    import torch</span></span>
 <span id="cb29-373"><a href="#cb29-373" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-374"><a href="#cb29-374" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Starting training run in </span><span class="sc">{</span>run_folder<span class="sc">}</span><span class="ss">."</span>)</span>
-<span id="cb29-375"><a href="#cb29-375" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Using </span><span class="sc">{</span>torch<span class="sc">.</span>cuda<span class="sc">.</span>device_count()<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>torch<span class="sc">.</span>cuda<span class="sc">.</span>get_device_name()<span class="sc">}</span><span class="ss"> GPU(s)."</span>)</span>
+<span id="cb29-374"><a href="#cb29-374" aria-hidden="true" tabindex="-1"></a><span class="in">    print(f"Starting training run in {run_folder}.")</span></span>
+<span id="cb29-375"><a href="#cb29-375" aria-hidden="true" tabindex="-1"></a><span class="in">    print(f"Using {torch.cuda.device_count()} {torch.cuda.get_device_name()} GPU(s).")</span></span>
 <span id="cb29-376"><a href="#cb29-376" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-377"><a href="#cb29-377" aria-hidden="true" tabindex="-1"></a>    ALLOW_WANDB <span class="op">=</span> os.environ.get(<span class="st">"ALLOW_WANDB"</span>, <span class="st">"false"</span>).lower() <span class="op">==</span> <span class="st">"true"</span></span>
-<span id="cb29-378"><a href="#cb29-378" aria-hidden="true" tabindex="-1"></a>    cmd <span class="op">=</span> <span class="ss">f"accelerate launch -m axolotl.cli.train ./config.yml </span><span class="sc">{</span><span class="st">'--wandb_mode disabled'</span> <span class="cf">if</span> <span class="kw">not</span> ALLOW_WANDB <span class="cf">else</span> <span class="st">''</span><span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb29-379"><a href="#cb29-379" aria-hidden="true" tabindex="-1"></a>    run_cmd(cmd, run_folder)</span>
+<span id="cb29-377"><a href="#cb29-377" aria-hidden="true" tabindex="-1"></a><span class="in">    ALLOW_WANDB = os.environ.get("ALLOW_WANDB", "false").lower() == "true"</span></span>
+<span id="cb29-378"><a href="#cb29-378" aria-hidden="true" tabindex="-1"></a><span class="in">    cmd = f"accelerate launch -m axolotl.cli.train ./config.yml {'--wandb_mode disabled' if not ALLOW_WANDB else ''}"</span></span>
+<span id="cb29-379"><a href="#cb29-379" aria-hidden="true" tabindex="-1"></a><span class="in">    run_cmd(cmd, run_folder)</span></span>
 <span id="cb29-380"><a href="#cb29-380" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-381"><a href="#cb29-381" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Kick off CPU job to merge the LoRA weights into base model.</span></span>
-<span id="cb29-382"><a href="#cb29-382" aria-hidden="true" tabindex="-1"></a>    merge_handle <span class="op">=</span> merge.spawn(run_folder, output_dir)</span>
-<span id="cb29-383"><a href="#cb29-383" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="ss">f"</span><span class="sc">{</span>run_folder<span class="sc">}</span><span class="ss">/logs.txt"</span>, <span class="st">"a"</span>) <span class="im">as</span> f:</span>
-<span id="cb29-384"><a href="#cb29-384" aria-hidden="true" tabindex="-1"></a>        f.write(<span class="ss">f"&lt;br&gt;merge: https://modal.com/logs/call/</span><span class="sc">{</span>merge_handle<span class="sc">.</span>object_id<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span>
-<span id="cb29-385"><a href="#cb29-385" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Beginning merge </span><span class="sc">{</span>merge_handle<span class="sc">.</span>object_id<span class="sc">}</span><span class="ss">."</span>)</span>
-<span id="cb29-386"><a href="#cb29-386" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> merge_handle</span>
+<span id="cb29-381"><a href="#cb29-381" aria-hidden="true" tabindex="-1"></a><span class="in">    # Kick off CPU job to merge the LoRA weights into base model.</span></span>
+<span id="cb29-382"><a href="#cb29-382" aria-hidden="true" tabindex="-1"></a><span class="in">    merge_handle = merge.spawn(run_folder, output_dir)</span></span>
+<span id="cb29-383"><a href="#cb29-383" aria-hidden="true" tabindex="-1"></a><span class="in">    with open(f"{run_folder}/logs.txt", "a") as f:</span></span>
+<span id="cb29-384"><a href="#cb29-384" aria-hidden="true" tabindex="-1"></a><span class="in">        f.write(f"&lt;br&gt;merge: https://modal.com/logs/call/{merge_handle.object_id}\n")</span></span>
+<span id="cb29-385"><a href="#cb29-385" aria-hidden="true" tabindex="-1"></a><span class="in">        print(f"Beginning merge {merge_handle.object_id}.")</span></span>
+<span id="cb29-386"><a href="#cb29-386" aria-hidden="true" tabindex="-1"></a><span class="in">    return merge_handle</span></span>
 <span id="cb29-387"><a href="#cb29-387" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb29-388"><a href="#cb29-388" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-389"><a href="#cb29-389" aria-hidden="true" tabindex="-1"></a>From this, we can see that we're largely running <span class="in">`accelerate launch -m axolotl.cli.train`</span> but using <span class="in">`run_cmd`</span>, which run the command inside a folder with Modal Volume reloading before and commiting on success.</span>
@@ -1553,31 +1749,31 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb29-395"><a href="#cb29-395" aria-hidden="true" tabindex="-1"></a>First, let's start at the top:</span>
 <span id="cb29-396"><a href="#cb29-396" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-397"><a href="#cb29-397" aria-hidden="true" tabindex="-1"></a><span class="in">```{.yaml filename="pythia.yml"}</span></span>
-<span id="cb29-398"><a href="#cb29-398" aria-hidden="true" tabindex="-1"></a><span class="co"># Lightweight example of training a small Pythia model for simple demonstrations</span></span>
-<span id="cb29-399"><a href="#cb29-399" aria-hidden="true" tabindex="-1"></a><span class="fu">base_model</span><span class="kw">:</span><span class="at"> EleutherAI/pythia-1.4b-deduped</span></span>
+<span id="cb29-398"><a href="#cb29-398" aria-hidden="true" tabindex="-1"></a><span class="in"># Lightweight example of training a small Pythia model for simple demonstrations</span></span>
+<span id="cb29-399"><a href="#cb29-399" aria-hidden="true" tabindex="-1"></a><span class="in">base_model: EleutherAI/pythia-1.4b-deduped</span></span>
 <span id="cb29-400"><a href="#cb29-400" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-401"><a href="#cb29-401" aria-hidden="true" tabindex="-1"></a><span class="fu">load_in_8bit</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span><span class="co"> # pythia is small, so keep it in 16-bit precision</span></span>
-<span id="cb29-402"><a href="#cb29-402" aria-hidden="true" tabindex="-1"></a><span class="fu">strict</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb29-401"><a href="#cb29-401" aria-hidden="true" tabindex="-1"></a><span class="in">load_in_8bit: false # pythia is small, so keep it in 16-bit precision</span></span>
+<span id="cb29-402"><a href="#cb29-402" aria-hidden="true" tabindex="-1"></a><span class="in">strict: false</span></span>
 <span id="cb29-403"><a href="#cb29-403" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb29-404"><a href="#cb29-404" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-405"><a href="#cb29-405" aria-hidden="true" tabindex="-1"></a>Here we specify the <span class="in">`base_model`</span>, which we decided to start with Pythia model for demo purposes. We also decided not to quantize our model to 8bit since Pythia is so small; therefore, this is why we ran LoRA, not QLoRA.</span>
 <span id="cb29-406"><a href="#cb29-406" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-407"><a href="#cb29-407" aria-hidden="true" tabindex="-1"></a><span class="in">```{.yaml filename="pythia.yml"}</span></span>
-<span id="cb29-408"><a href="#cb29-408" aria-hidden="true" tabindex="-1"></a><span class="fu">datasets</span><span class="kw">:</span></span>
-<span id="cb29-409"><a href="#cb29-409" aria-hidden="true" tabindex="-1"></a><span class="co">  # This will be the path used for the data when it is saved to the Volume in the cloud.</span></span>
-<span id="cb29-410"><a href="#cb29-410" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> data.jsonl</span></span>
-<span id="cb29-411"><a href="#cb29-411" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ds_type</span><span class="kw">:</span><span class="at"> json</span></span>
-<span id="cb29-412"><a href="#cb29-412" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span></span>
-<span id="cb29-413"><a href="#cb29-413" aria-hidden="true" tabindex="-1"></a><span class="co">      # JSONL file contains question, context, answer fields per line.</span></span>
-<span id="cb29-414"><a href="#cb29-414" aria-hidden="true" tabindex="-1"></a><span class="co">      # This gets mapped to instruction, input, output axolotl tags.</span></span>
-<span id="cb29-415"><a href="#cb29-415" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">field_instruction</span><span class="kw">:</span><span class="at"> question</span></span>
-<span id="cb29-416"><a href="#cb29-416" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">field_input</span><span class="kw">:</span><span class="at"> context</span></span>
-<span id="cb29-417"><a href="#cb29-417" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">field_output</span><span class="kw">:</span><span class="at"> answer</span></span>
-<span id="cb29-418"><a href="#cb29-418" aria-hidden="true" tabindex="-1"></a><span class="co">      # Format is used by axolotl to generate the prompt.</span></span>
-<span id="cb29-419"><a href="#cb29-419" aria-hidden="true" tabindex="-1"></a><span class="fu">      format</span><span class="kw">: </span><span class="ch">|-</span></span>
-<span id="cb29-420"><a href="#cb29-420" aria-hidden="true" tabindex="-1"></a>        [INST] Using the schema context below, generate a SQL query that answers the question.</span>
-<span id="cb29-421"><a href="#cb29-421" aria-hidden="true" tabindex="-1"></a>        {input}</span>
-<span id="cb29-422"><a href="#cb29-422" aria-hidden="true" tabindex="-1"></a>        {instruction} [/INST]</span>
+<span id="cb29-408"><a href="#cb29-408" aria-hidden="true" tabindex="-1"></a><span class="in">datasets:</span></span>
+<span id="cb29-409"><a href="#cb29-409" aria-hidden="true" tabindex="-1"></a><span class="in">  # This will be the path used for the data when it is saved to the Volume in the cloud.</span></span>
+<span id="cb29-410"><a href="#cb29-410" aria-hidden="true" tabindex="-1"></a><span class="in">  - path: data.jsonl</span></span>
+<span id="cb29-411"><a href="#cb29-411" aria-hidden="true" tabindex="-1"></a><span class="in">    ds_type: json</span></span>
+<span id="cb29-412"><a href="#cb29-412" aria-hidden="true" tabindex="-1"></a><span class="in">    type:</span></span>
+<span id="cb29-413"><a href="#cb29-413" aria-hidden="true" tabindex="-1"></a><span class="in">      # JSONL file contains question, context, answer fields per line.</span></span>
+<span id="cb29-414"><a href="#cb29-414" aria-hidden="true" tabindex="-1"></a><span class="in">      # This gets mapped to instruction, input, output axolotl tags.</span></span>
+<span id="cb29-415"><a href="#cb29-415" aria-hidden="true" tabindex="-1"></a><span class="in">      field_instruction: question</span></span>
+<span id="cb29-416"><a href="#cb29-416" aria-hidden="true" tabindex="-1"></a><span class="in">      field_input: context</span></span>
+<span id="cb29-417"><a href="#cb29-417" aria-hidden="true" tabindex="-1"></a><span class="in">      field_output: answer</span></span>
+<span id="cb29-418"><a href="#cb29-418" aria-hidden="true" tabindex="-1"></a><span class="in">      # Format is used by axolotl to generate the prompt.</span></span>
+<span id="cb29-419"><a href="#cb29-419" aria-hidden="true" tabindex="-1"></a><span class="in">      format: |-</span></span>
+<span id="cb29-420"><a href="#cb29-420" aria-hidden="true" tabindex="-1"></a><span class="in">        [INST] Using the schema context below, generate a SQL query that answers the question.</span></span>
+<span id="cb29-421"><a href="#cb29-421" aria-hidden="true" tabindex="-1"></a><span class="in">        {input}</span></span>
+<span id="cb29-422"><a href="#cb29-422" aria-hidden="true" tabindex="-1"></a><span class="in">        {instruction} [/INST]</span></span>
 <span id="cb29-423"><a href="#cb29-423" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb29-424"><a href="#cb29-424" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-425"><a href="#cb29-425" aria-hidden="true" tabindex="-1"></a>The next part shows the dataset configuration. In this case, we set the <span class="in">`path`</span> and <span class="in">`ds_type`</span> for the data when it is saved to the cloud Volume.</span>
@@ -1591,21 +1787,21 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb29-433"><a href="#cb29-433" aria-hidden="true" tabindex="-1"></a>Per the <span class="co">[</span><span class="ot">docs</span><span class="co">](https://openaccess-ai-collective.github.io/axolotl/docs/dataset-formats/inst_tune.html#how-to-add-custom-prompt-format)</span>, for a dataset that is preprocessed for instruction purposes:</span>
 <span id="cb29-434"><a href="#cb29-434" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-435"><a href="#cb29-435" aria-hidden="true" tabindex="-1"></a><span class="in">```{.python filename="data.jsonl"}</span></span>
-<span id="cb29-436"><a href="#cb29-436" aria-hidden="true" tabindex="-1"></a>{<span class="st">"input"</span>: <span class="st">"..."</span>, <span class="st">"output"</span>: <span class="st">"..."</span>}</span>
+<span id="cb29-436"><a href="#cb29-436" aria-hidden="true" tabindex="-1"></a><span class="in">{"input": "...", "output": "..."}</span></span>
 <span id="cb29-437"><a href="#cb29-437" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb29-438"><a href="#cb29-438" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-439"><a href="#cb29-439" aria-hidden="true" tabindex="-1"></a>You can use this example in your YAML config:</span>
 <span id="cb29-440"><a href="#cb29-440" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-441"><a href="#cb29-441" aria-hidden="true" tabindex="-1"></a><span class="in">```{.yaml filename="config.yaml"}</span></span>
-<span id="cb29-442"><a href="#cb29-442" aria-hidden="true" tabindex="-1"></a><span class="fu">datasets</span><span class="kw">:</span></span>
-<span id="cb29-443"><a href="#cb29-443" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> repo</span></span>
-<span id="cb29-444"><a href="#cb29-444" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span></span>
-<span id="cb29-445"><a href="#cb29-445" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">system_prompt</span><span class="kw">:</span><span class="at"> </span><span class="st">""</span></span>
-<span id="cb29-446"><a href="#cb29-446" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">field_system</span><span class="kw">:</span><span class="at"> system</span></span>
-<span id="cb29-447"><a href="#cb29-447" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">field_instruction</span><span class="kw">:</span><span class="at"> input</span></span>
-<span id="cb29-448"><a href="#cb29-448" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">field_output</span><span class="kw">:</span><span class="at"> output</span></span>
-<span id="cb29-449"><a href="#cb29-449" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">format</span><span class="kw">:</span><span class="at"> </span><span class="st">"[INST] {instruction} [/INST]"</span></span>
-<span id="cb29-450"><a href="#cb29-450" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">no_input_format</span><span class="kw">:</span><span class="at"> </span><span class="st">"[INST] {instruction} [/INST]"</span></span>
+<span id="cb29-442"><a href="#cb29-442" aria-hidden="true" tabindex="-1"></a><span class="in">datasets:</span></span>
+<span id="cb29-443"><a href="#cb29-443" aria-hidden="true" tabindex="-1"></a><span class="in">  - path: repo</span></span>
+<span id="cb29-444"><a href="#cb29-444" aria-hidden="true" tabindex="-1"></a><span class="in">    type:</span></span>
+<span id="cb29-445"><a href="#cb29-445" aria-hidden="true" tabindex="-1"></a><span class="in">      system_prompt: ""</span></span>
+<span id="cb29-446"><a href="#cb29-446" aria-hidden="true" tabindex="-1"></a><span class="in">      field_system: system</span></span>
+<span id="cb29-447"><a href="#cb29-447" aria-hidden="true" tabindex="-1"></a><span class="in">      field_instruction: input</span></span>
+<span id="cb29-448"><a href="#cb29-448" aria-hidden="true" tabindex="-1"></a><span class="in">      field_output: output</span></span>
+<span id="cb29-449"><a href="#cb29-449" aria-hidden="true" tabindex="-1"></a><span class="in">      format: "[INST] {instruction} [/INST]"</span></span>
+<span id="cb29-450"><a href="#cb29-450" aria-hidden="true" tabindex="-1"></a><span class="in">      no_input_format: "[INST] {instruction} [/INST]"</span></span>
 <span id="cb29-451"><a href="#cb29-451" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb29-452"><a href="#cb29-452" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-453"><a href="#cb29-453" aria-hidden="true" tabindex="-1"></a>See the <span class="co">[</span><span class="ot">docs</span><span class="co">](https://openaccess-ai-collective.github.io/axolotl/docs/dataset-formats/inst_tune.html)</span> for other data format options</span>
@@ -1613,61 +1809,61 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb29-455"><a href="#cb29-455" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb29-456"><a href="#cb29-456" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-457"><a href="#cb29-457" aria-hidden="true" tabindex="-1"></a><span class="in">```{.yaml filename="pythia.yml"}</span></span>
-<span id="cb29-458"><a href="#cb29-458" aria-hidden="true" tabindex="-1"></a><span class="co"># add tokens</span></span>
-<span id="cb29-459"><a href="#cb29-459" aria-hidden="true" tabindex="-1"></a><span class="fu">tokens</span><span class="kw">:</span></span>
-<span id="cb29-460"><a href="#cb29-460" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"[INST]"</span></span>
-<span id="cb29-461"><a href="#cb29-461" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">" [/INST]"</span></span>
-<span id="cb29-462"><a href="#cb29-462" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"[SQL]"</span></span>
-<span id="cb29-463"><a href="#cb29-463" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">" [/SQL]"</span></span>
+<span id="cb29-458"><a href="#cb29-458" aria-hidden="true" tabindex="-1"></a><span class="in"># add tokens</span></span>
+<span id="cb29-459"><a href="#cb29-459" aria-hidden="true" tabindex="-1"></a><span class="in">tokens:</span></span>
+<span id="cb29-460"><a href="#cb29-460" aria-hidden="true" tabindex="-1"></a><span class="in">  - "[INST]"</span></span>
+<span id="cb29-461"><a href="#cb29-461" aria-hidden="true" tabindex="-1"></a><span class="in">  - " [/INST]"</span></span>
+<span id="cb29-462"><a href="#cb29-462" aria-hidden="true" tabindex="-1"></a><span class="in">  - "[SQL]"</span></span>
+<span id="cb29-463"><a href="#cb29-463" aria-hidden="true" tabindex="-1"></a><span class="in">  - " [/SQL]"</span></span>
 <span id="cb29-464"><a href="#cb29-464" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-465"><a href="#cb29-465" aria-hidden="true" tabindex="-1"></a><span class="fu">dataset_prepared_path</span><span class="kw">:</span><span class="at"> preprocessed</span></span>
-<span id="cb29-466"><a href="#cb29-466" aria-hidden="true" tabindex="-1"></a><span class="fu">val_set_size</span><span class="kw">:</span><span class="at"> </span><span class="fl">0.05</span></span>
-<span id="cb29-467"><a href="#cb29-467" aria-hidden="true" tabindex="-1"></a><span class="fu">output_dir</span><span class="kw">:</span><span class="at"> ./lora-out</span></span>
+<span id="cb29-465"><a href="#cb29-465" aria-hidden="true" tabindex="-1"></a><span class="in">dataset_prepared_path: preprocessed</span></span>
+<span id="cb29-466"><a href="#cb29-466" aria-hidden="true" tabindex="-1"></a><span class="in">val_set_size: 0.05</span></span>
+<span id="cb29-467"><a href="#cb29-467" aria-hidden="true" tabindex="-1"></a><span class="in">output_dir: ./lora-out</span></span>
 <span id="cb29-468"><a href="#cb29-468" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-469"><a href="#cb29-469" aria-hidden="true" tabindex="-1"></a><span class="co"># max length of an input to train with, typically less than 2048 as most have context limit of 2048</span></span>
-<span id="cb29-470"><a href="#cb29-470" aria-hidden="true" tabindex="-1"></a><span class="fu">sequence_len</span><span class="kw">:</span><span class="at"> </span><span class="dv">4096</span></span>
-<span id="cb29-471"><a href="#cb29-471" aria-hidden="true" tabindex="-1"></a><span class="co"># use efficient multi-packing with block diagonal attention and per sequence position_ids.</span></span>
-<span id="cb29-472"><a href="#cb29-472" aria-hidden="true" tabindex="-1"></a><span class="fu">sample_packing</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
-<span id="cb29-473"><a href="#cb29-473" aria-hidden="true" tabindex="-1"></a><span class="fu">eval_sample_packing</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
-<span id="cb29-474"><a href="#cb29-474" aria-hidden="true" tabindex="-1"></a><span class="co"># Pad inputs so each step uses constant sized buffers</span></span>
-<span id="cb29-475"><a href="#cb29-475" aria-hidden="true" tabindex="-1"></a><span class="co"># This will reduce memory fragmentation and may prevent OOMs, by re-using memory more efficiently</span></span>
-<span id="cb29-476"><a href="#cb29-476" aria-hidden="true" tabindex="-1"></a><span class="fu">pad_to_sequence_len</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb29-469"><a href="#cb29-469" aria-hidden="true" tabindex="-1"></a><span class="in"># max length of an input to train with, typically less than 2048 as most have context limit of 2048</span></span>
+<span id="cb29-470"><a href="#cb29-470" aria-hidden="true" tabindex="-1"></a><span class="in">sequence_len: 4096</span></span>
+<span id="cb29-471"><a href="#cb29-471" aria-hidden="true" tabindex="-1"></a><span class="in"># use efficient multi-packing with block diagonal attention and per sequence position_ids.</span></span>
+<span id="cb29-472"><a href="#cb29-472" aria-hidden="true" tabindex="-1"></a><span class="in">sample_packing: false</span></span>
+<span id="cb29-473"><a href="#cb29-473" aria-hidden="true" tabindex="-1"></a><span class="in">eval_sample_packing: false</span></span>
+<span id="cb29-474"><a href="#cb29-474" aria-hidden="true" tabindex="-1"></a><span class="in"># Pad inputs so each step uses constant sized buffers</span></span>
+<span id="cb29-475"><a href="#cb29-475" aria-hidden="true" tabindex="-1"></a><span class="in"># This will reduce memory fragmentation and may prevent OOMs, by re-using memory more efficiently</span></span>
+<span id="cb29-476"><a href="#cb29-476" aria-hidden="true" tabindex="-1"></a><span class="in">pad_to_sequence_len: false</span></span>
 <span id="cb29-477"><a href="#cb29-477" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb29-478"><a href="#cb29-478" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-479"><a href="#cb29-479" aria-hidden="true" tabindex="-1"></a>This part provides special tokens, paths, and some settings for handling padding and maximium training sequence length.</span>
 <span id="cb29-480"><a href="#cb29-480" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-481"><a href="#cb29-481" aria-hidden="true" tabindex="-1"></a><span class="in">```{.yaml filename="pythia.yml"}</span></span>
-<span id="cb29-482"><a href="#cb29-482" aria-hidden="true" tabindex="-1"></a><span class="fu">adapter</span><span class="kw">:</span><span class="at"> lora</span></span>
-<span id="cb29-483"><a href="#cb29-483" aria-hidden="true" tabindex="-1"></a><span class="fu">lora_model_dir</span><span class="kw">:</span></span>
-<span id="cb29-484"><a href="#cb29-484" aria-hidden="true" tabindex="-1"></a><span class="fu">lora_r</span><span class="kw">:</span><span class="at"> </span><span class="dv">16</span></span>
-<span id="cb29-485"><a href="#cb29-485" aria-hidden="true" tabindex="-1"></a><span class="fu">lora_alpha</span><span class="kw">:</span><span class="at"> </span><span class="dv">32</span></span>
-<span id="cb29-486"><a href="#cb29-486" aria-hidden="true" tabindex="-1"></a><span class="fu">lora_dropout</span><span class="kw">:</span><span class="at"> </span><span class="fl">0.05</span></span>
-<span id="cb29-487"><a href="#cb29-487" aria-hidden="true" tabindex="-1"></a><span class="fu">lora_target_linear</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb29-488"><a href="#cb29-488" aria-hidden="true" tabindex="-1"></a><span class="fu">lora_fan_in_fan_out</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span><span class="co"> # required for pythia/GPTNeoX lora</span></span>
-<span id="cb29-489"><a href="#cb29-489" aria-hidden="true" tabindex="-1"></a><span class="fu">lora_target_modules</span><span class="kw">:</span></span>
-<span id="cb29-490"><a href="#cb29-490" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span>query_key_value</span>
-<span id="cb29-491"><a href="#cb29-491" aria-hidden="true" tabindex="-1"></a><span class="fu">lora_modules_to_save</span><span class="kw">:</span><span class="co"> # required when adding new tokens to pythia</span></span>
-<span id="cb29-492"><a href="#cb29-492" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span>embed_in</span>
-<span id="cb29-493"><a href="#cb29-493" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span>embed_out</span>
+<span id="cb29-482"><a href="#cb29-482" aria-hidden="true" tabindex="-1"></a><span class="in">adapter: lora</span></span>
+<span id="cb29-483"><a href="#cb29-483" aria-hidden="true" tabindex="-1"></a><span class="in">lora_model_dir:</span></span>
+<span id="cb29-484"><a href="#cb29-484" aria-hidden="true" tabindex="-1"></a><span class="in">lora_r: 16</span></span>
+<span id="cb29-485"><a href="#cb29-485" aria-hidden="true" tabindex="-1"></a><span class="in">lora_alpha: 32</span></span>
+<span id="cb29-486"><a href="#cb29-486" aria-hidden="true" tabindex="-1"></a><span class="in">lora_dropout: 0.05</span></span>
+<span id="cb29-487"><a href="#cb29-487" aria-hidden="true" tabindex="-1"></a><span class="in">lora_target_linear: true</span></span>
+<span id="cb29-488"><a href="#cb29-488" aria-hidden="true" tabindex="-1"></a><span class="in">lora_fan_in_fan_out: true # required for pythia/GPTNeoX lora</span></span>
+<span id="cb29-489"><a href="#cb29-489" aria-hidden="true" tabindex="-1"></a><span class="in">lora_target_modules:</span></span>
+<span id="cb29-490"><a href="#cb29-490" aria-hidden="true" tabindex="-1"></a><span class="in">  - query_key_value</span></span>
+<span id="cb29-491"><a href="#cb29-491" aria-hidden="true" tabindex="-1"></a><span class="in">lora_modules_to_save: # required when adding new tokens to pythia</span></span>
+<span id="cb29-492"><a href="#cb29-492" aria-hidden="true" tabindex="-1"></a><span class="in">  - embed_in</span></span>
+<span id="cb29-493"><a href="#cb29-493" aria-hidden="true" tabindex="-1"></a><span class="in">  - embed_out</span></span>
 <span id="cb29-494"><a href="#cb29-494" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-495"><a href="#cb29-495" aria-hidden="true" tabindex="-1"></a><span class="fu">gradient_accumulation_steps</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
-<span id="cb29-496"><a href="#cb29-496" aria-hidden="true" tabindex="-1"></a><span class="fu">micro_batch_size</span><span class="kw">:</span><span class="at"> </span><span class="dv">32</span></span>
-<span id="cb29-497"><a href="#cb29-497" aria-hidden="true" tabindex="-1"></a><span class="fu">num_epochs</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
-<span id="cb29-498"><a href="#cb29-498" aria-hidden="true" tabindex="-1"></a><span class="fu">optimizer</span><span class="kw">:</span><span class="at"> adamw_torch</span></span>
-<span id="cb29-499"><a href="#cb29-499" aria-hidden="true" tabindex="-1"></a><span class="fu">lr_scheduler</span><span class="kw">:</span><span class="at"> cosine</span></span>
-<span id="cb29-500"><a href="#cb29-500" aria-hidden="true" tabindex="-1"></a><span class="fu">learning_rate</span><span class="kw">:</span><span class="at"> </span><span class="fl">0.0001</span></span>
+<span id="cb29-495"><a href="#cb29-495" aria-hidden="true" tabindex="-1"></a><span class="in">gradient_accumulation_steps: 1</span></span>
+<span id="cb29-496"><a href="#cb29-496" aria-hidden="true" tabindex="-1"></a><span class="in">micro_batch_size: 32</span></span>
+<span id="cb29-497"><a href="#cb29-497" aria-hidden="true" tabindex="-1"></a><span class="in">num_epochs: 1</span></span>
+<span id="cb29-498"><a href="#cb29-498" aria-hidden="true" tabindex="-1"></a><span class="in">optimizer: adamw_torch</span></span>
+<span id="cb29-499"><a href="#cb29-499" aria-hidden="true" tabindex="-1"></a><span class="in">lr_scheduler: cosine</span></span>
+<span id="cb29-500"><a href="#cb29-500" aria-hidden="true" tabindex="-1"></a><span class="in">learning_rate: 0.0001</span></span>
 <span id="cb29-501"><a href="#cb29-501" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-502"><a href="#cb29-502" aria-hidden="true" tabindex="-1"></a><span class="fu">bf16</span><span class="kw">:</span><span class="at"> auto</span></span>
-<span id="cb29-503"><a href="#cb29-503" aria-hidden="true" tabindex="-1"></a><span class="fu">fp16</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
-<span id="cb29-504"><a href="#cb29-504" aria-hidden="true" tabindex="-1"></a><span class="fu">tf32</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb29-502"><a href="#cb29-502" aria-hidden="true" tabindex="-1"></a><span class="in">bf16: auto</span></span>
+<span id="cb29-503"><a href="#cb29-503" aria-hidden="true" tabindex="-1"></a><span class="in">fp16: false</span></span>
+<span id="cb29-504"><a href="#cb29-504" aria-hidden="true" tabindex="-1"></a><span class="in">tf32: false</span></span>
 <span id="cb29-505"><a href="#cb29-505" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-506"><a href="#cb29-506" aria-hidden="true" tabindex="-1"></a><span class="fu">gradient_checkpointing</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb29-507"><a href="#cb29-507" aria-hidden="true" tabindex="-1"></a><span class="fu">early_stopping_patience</span><span class="kw">:</span></span>
-<span id="cb29-508"><a href="#cb29-508" aria-hidden="true" tabindex="-1"></a><span class="fu">local_rank</span><span class="kw">:</span></span>
-<span id="cb29-509"><a href="#cb29-509" aria-hidden="true" tabindex="-1"></a><span class="fu">logging_steps</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb29-506"><a href="#cb29-506" aria-hidden="true" tabindex="-1"></a><span class="in">gradient_checkpointing: true</span></span>
+<span id="cb29-507"><a href="#cb29-507" aria-hidden="true" tabindex="-1"></a><span class="in">early_stopping_patience:</span></span>
+<span id="cb29-508"><a href="#cb29-508" aria-hidden="true" tabindex="-1"></a><span class="in">local_rank:</span></span>
+<span id="cb29-509"><a href="#cb29-509" aria-hidden="true" tabindex="-1"></a><span class="in">logging_steps: 1</span></span>
 <span id="cb29-510"><a href="#cb29-510" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-511"><a href="#cb29-511" aria-hidden="true" tabindex="-1"></a><span class="fu">warmup_steps</span><span class="kw">:</span><span class="at"> </span><span class="dv">10</span></span>
-<span id="cb29-512"><a href="#cb29-512" aria-hidden="true" tabindex="-1"></a><span class="fu">weight_decay</span><span class="kw">:</span><span class="at"> </span><span class="fl">0.0</span></span>
+<span id="cb29-511"><a href="#cb29-511" aria-hidden="true" tabindex="-1"></a><span class="in">warmup_steps: 10</span></span>
+<span id="cb29-512"><a href="#cb29-512" aria-hidden="true" tabindex="-1"></a><span class="in">weight_decay: 0.0</span></span>
 <span id="cb29-513"><a href="#cb29-513" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb29-514"><a href="#cb29-514" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-515"><a href="#cb29-515" aria-hidden="true" tabindex="-1"></a>This last part is where we're customizing our LoRA model. For this, I'm not going to go into detail but I encourage the curious reader to read on Sebastian Raschka's wonderful <span class="co">[</span><span class="ot">Practical Tips for Finetuning LLMs</span><span class="co">](https://magazine.sebastianraschka.com/p/practical-tips-for-finetuning-llms)</span>. It explains a lot of the intuition on LoRA and tips from LoRA training experiments.</span>
@@ -1813,9 +2009,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb29-655"><a href="#cb29-655" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-656"><a href="#cb29-656" aria-hidden="true" tabindex="-1"></a>Nice! We have a much better result of what we're looking for. </span>
 <span id="cb29-657"><a href="#cb29-657" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-658"><a href="#cb29-658" aria-hidden="true" tabindex="-1"></a>One thing I noticed after the fact was I forgot to setup a Weights and Bias project -- make sure to set <span class="in">`wandb_project: sqlqa-llama3-lora`</span> in the config file. That's okay - we'll make sure to do this in our next chapter when we run a custom fine tuning project.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb29-658"><a href="#cb29-658" aria-hidden="true" tabindex="-1"></a>One thing I noticed after the fact was I forgot to setup a Weights and Bias project -- make sure to set <span class="in">`wandb_project: sqlqa-llama3-lora`</span> in the config file. That's okay - we'll make sure to do this in our next chapter when we run a custom fine tuning project.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
+
 
 
 

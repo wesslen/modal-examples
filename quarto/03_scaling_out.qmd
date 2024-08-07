@@ -202,7 +202,11 @@ def get_prices(symbol):
 
 ## Plot the result
 
-Here is our plotting code. We run this in Modal, although you could also run it locally. Note that the plotting code calls the other two functions. Since we plot the data in the cloud, we can't display it, so we generate a PNG and return the binary content from the function.
+Here is our code for our plot using `matplotlib`. 
+
+We run this in Modal, although you could also run it locally. 
+
+Note that the code calls the other two functions. Since we plot the data in the cloud, we can't display it, so we generate a PNG and return the binary content from the function.
 
 ```python
 @app.function()
