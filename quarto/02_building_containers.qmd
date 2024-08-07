@@ -272,7 +272,7 @@ When doing this, I now get the result I want:
 $ modal run 02_building_containers/import_sklearn_r2.py 
 ✓ Initialized. View run at https://modal.com/charlotte-llm/main/apps/ap-xxxxxxxxxx
 ✓ Created objects.
-├── 🔨 Created mount /Users/ryan/Desktop/Desktop - Ryan’s iMac/personal/modal-examples/02_building_containers/import_sklearn_r2.py
+├── 🔨 Created mount /Users/ryan/modal-examples/02_building_containers/import_sklearn_r2.py
 └── 🔨 Created function fit_r2.
 Inside run!
 R squared is: -0.8503156043967386
