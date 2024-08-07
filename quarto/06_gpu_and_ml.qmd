@@ -84,8 +84,7 @@ Finished snapshot; took 11.22s
 
 Built image im-q9v0dExl8NyFXzmsp0RKxA in 106.04s
 ✓ Created objects.
-├── 🔨 Created mount /Users/ryan/Desktop/Desktop - Ryan’s 
-│   iMac/personal/modal-examples/06_gpu_and_ml/import_torch.py
+├── 🔨 Created mount /Users/ryan/modal-examples/06_gpu_and_ml/import_torch.py
 └── 🔨 Created function gpu_function.
 Fri Jun 14 20:37:32 2024       
 +-----------------------------------------------------------------------------------------+
