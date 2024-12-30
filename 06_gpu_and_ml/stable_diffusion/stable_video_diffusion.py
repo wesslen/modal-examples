@@ -1,6 +1,10 @@
 # ---
 # cmd: ["modal", "serve", "06_gpu_and_ml/stable_diffusion/stable_video_diffusion.py"]
 # ---
+# # Run Stable Video Diffusion in a Streamlit app
+#
+# This example runs the [Stable Video Diffusion](https://huggingface.co/stabilityai/stable-video-diffusion-img2vid-xt) image-to-video model.
+
 import os
 import sys
 
@@ -82,7 +86,14 @@ def run_streamlit(publish_url: bool = False):
         )
 
 
-@app.function()
+endpoint_image = modal.Image.debian_slim(python_version="3.10").pip_install(
+    "fastapi[standard]==0.115.4",
+    "pydantic==2.9.2",
+    "starlette==0.41.2",
+)
+
+
+@app.function(image=endpoint_image)
 @modal.web_endpoint(method="GET", label="svd")
 def share():
     from fastapi.responses import RedirectResponse

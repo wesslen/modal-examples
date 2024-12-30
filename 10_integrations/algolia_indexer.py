@@ -1,5 +1,6 @@
 # ---
 # deploy: true
+# env: {"MODAL_ENVIRONMENT": "main"}
 # ---
 # # Algolia docsearch crawler
 #
@@ -16,20 +17,20 @@ import json
 import os
 import subprocess
 
-from modal import App, Image, Secret, web_endpoint
+import modal
 
 # Modal lets you [use and extend existing Docker images](/docs/guide/custom-container#use-an-existing-container-image-with-from_registry),
 # as long as they have `python` and `pip` available. We'll use the official crawler image built by Algolia, with a small
 # adjustment: since this image has `python` symlinked to `python3.6` and Modal is not compatible with Python 3.6, we
 # install Python 3.11 and symlink that as the `python` executable instead.
 
-algolia_image = Image.from_registry(
+algolia_image = modal.Image.from_registry(
     "algolia/docsearch-scraper:v1.16.0",
     add_python="3.11",
     setup_dockerfile_commands=["ENTRYPOINT []"],
 )
 
-app = App("example-algolia-indexer")
+app = modal.App("example-algolia-indexer")
 
 # ## Configure the crawler
 #
@@ -39,22 +40,63 @@ app = App("example-algolia-indexer")
 
 CONFIG = {
     "index_name": "modal_docs",
+    "custom_settings": {
+        "separatorsToIndex": "._",
+        "synonyms": [["cls", "class"]],
+    },
+    "stop_urls": [
+        "https://modal.com/docs/reference/modal.Stub",
+        "https://modal.com/gpu-glossary",
+    ],
     "start_urls": [
-        {"url": "https://modal.com/docs/guide", "page_rank": 2},
-        {"url": "https://modal.com/docs/examples", "page_rank": 1},
-        {"url": "https://modal.com/docs/reference", "page_rank": 1},
+        {
+            "url": "https://modal.com/docs/guide",
+            "selectors_key": "default",
+            "page_rank": 2,
+        },
+        {
+            "url": "https://modal.com/docs/examples",
+            "selectors_key": "examples",
+            "page_rank": 1,
+        },
+        {
+            "url": "https://modal.com/docs/reference",
+            "selectors_key": "reference",
+            "page_rank": 1,
+        },
     ],
     "selectors": {
-        "lvl0": {
-            "selector": ".sidebar .active",
-            "default_value": "Documentation",
-            "global": True,
+        "default": {
+            "lvl0": {
+                "selector": "header .navlink-active",
+                "global": True,
+            },
+            "lvl1": "article h1",
+            "lvl2": "article h2",
+            "lvl3": "article h3",
+            "text": "article p,article ol,article ul,article pre",
         },
-        "lvl1": "article h1",
-        "lvl2": "article h2",
-        "lvl3": "article h3",
-        "lvl4": "article h4",
-        "text": "article p,article ol,article ul,article pre",
+        "examples": {
+            "lvl0": {
+                "selector": "header .navlink-active",
+                "global": True,
+            },
+            "lvl1": "article h1",
+            "text": "article p,article ol,article ul,article pre",
+        },
+        "reference": {
+            "lvl0": {
+                "selector": "//div[contains(@class, 'sidebar')]//a[contains(@class, 'active')]//preceding::a[contains(@class, 'header')][1]",
+                "type": "xpath",
+                "global": True,
+                "default_value": "",
+                "skip": {"when": {"value": ""}},
+            },
+            "lvl1": "article h1",
+            "lvl2": "article h2",
+            "lvl3": "article h3",
+            "text": "article p,article ol,article ul,article pre",
+        },
     },
 }
 
@@ -62,9 +104,9 @@ CONFIG = {
 #
 # If you don't already have one, sign up for an account on [Algolia](https://www.algolia.com/). Set up
 # a project and create an API key with `write` access to your index, and with the ACL permissions
-# `addObject`, `editSettings` and `deleteIndex`. Now, create a secret on the Modal [Secrets](/secrets)
+# `addObject`, `editSettings` and `deleteIndex`. Now, create a Secret on the Modal [Secrets](https://modal.com/secrets)
 # page with the `API_KEY` and `APPLICATION_ID` you just created. You can name this anything you want,
-# we named it `algolia-secret`.
+# but we named it `algolia-secret` and so that's what the code below expects.
 
 # ## The actual function
 #
@@ -78,7 +120,7 @@ CONFIG = {
 
 @app.function(
     image=algolia_image,
-    secrets=[Secret.from_name("algolia-secret")],
+    secrets=[modal.Secret.from_name("algolia-secret")],
 )
 def crawl():
     # Installed with a 3.6 venv; Python 3.6 is unsupported by Modal, so use a subprocess instead.
@@ -91,31 +133,31 @@ def crawl():
 # We want to be able to trigger this function through a webhook.
 
 
-@app.function()
-@web_endpoint()
+@app.function(image=modal.Image.debian_slim().pip_install("fastapi[standard]"))
+@modal.web_endpoint()
 def crawl_webhook():
     crawl.remote()
     return "Finished indexing docs"
 
 
 # ## Deploy the indexer
-#
+
 # That's all the code we need! To deploy your application, run
-#
+
 # ```shell
 # modal deploy algolia_indexer.py
 # ```
-#
+
 # If successful, this will print a URL for your new webhook, that you can hit using
 # `curl` or a browser. Logs from webhook invocations can be found from the [apps](/apps)
 # page.
-#
+
 # The indexed contents can be found at https://www.algolia.com/apps/APP_ID/explorer/browse/, for your
 # APP_ID. Once you're happy with the results, you can [set up the `docsearch` package with your
 # website](https://docsearch.algolia.com/docs/docsearch-v3/), and create a search component that uses this index.
 
 # ## Entrypoint for development
-#
+
 # To make it easier to test this, we also have an entrypoint for when you run
 # `modal run algolia_indexer.py`
 

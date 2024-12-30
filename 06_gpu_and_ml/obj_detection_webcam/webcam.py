@@ -2,55 +2,53 @@
 # cmd: ["modal", "serve", "06_gpu_and_ml/obj_detection_webcam/webcam.py"]
 # deploy: true
 # ---
-# # Machine learning model inference endpoint that uses the webcam
-#
+
+# # Real-time object detection via webcam
+
 # This example creates a web endpoint that uses a Huggingface model for object detection.
-#
+
 # The web endpoint takes an image from their webcam, and sends it to a Modal web endpoint.
 # The Modal web endpoint in turn calls a Modal function that runs the actual model.
-#
+
 # If you run this, it will look something like this:
-#
+
 # ![webcam](./webcam.png)
-#
+
 # ## Live demo
-#
-# [Take a look at the deployed app](https://modal-labs-example-webcam-object-detection-fastapi-app.modal.run/).
-#
+
+# [Take a look at the deployed app](https://modal-labs-examples--example-webcam-object-detection.modal.run/).
+
 # A couple of caveats:
 # * This is not optimized for latency: every prediction takes about 1s, and
 #   there's an additional overhead on the first prediction since the containers
 #   have to be started and the model initialized.
 # * This doesn't work on iPhone unfortunately due to some issues with HTML5
 #   webcam components
-#
+
 # ## Code
-#
+
 # Starting with imports:
 
 import base64
 import io
 from pathlib import Path
 
-from fastapi import FastAPI, Request, Response
-from fastapi.staticfiles import StaticFiles
-from modal import App, Image, Mount, asgi_app, build, enter, method
+import modal
 
 # We need to install [transformers](https://github.com/huggingface/transformers)
 # which is a package Huggingface uses for all their models, but also
 # [Pillow](https://python-pillow.org/) which lets us work with images from Python,
 # and a system font for drawing.
-#
+
 # This example uses the `facebook/detr-resnet-50` pre-trained model, which is downloaded
-# once at image build time using the `@build` hook and saved into the image. 'Baking'
-# models into the `modal.Image` at build time provided the fastest cold start.
+# once at image build time using the `@build` hook and saved into the image.
 
 model_repo_id = "facebook/detr-resnet-50"
 
 
-app = App("example-webcam-object-detection")
+app = modal.App("example-webcam-object-detection")
 image = (
-    Image.debian_slim()
+    modal.Image.debian_slim(python_version="3.12")
     .pip_install(
         "huggingface-hub==0.16.4",
         "Pillow",
@@ -62,16 +60,18 @@ image = (
 
 
 # ## Prediction function
-#
+
 # The object detection function has a few different features worth mentioning:
-#
+
 # * There's a container initialization step in the method decorated with `@enter()`,
 #   which runs on every container start. This lets us load the model only once per
 #   container, so that it's reused for subsequent function calls.
+
 # * Above we stored the model in the container image. This lets us download the model only
 #   when the image is (re)built, and not everytime the function is called.
+
 # * We're running it on multiple CPUs for extra performance
-#
+
 # Note that the function takes an image and returns a new image.
 # The input image is from the webcam
 # The output image is an image with all the bounding boxes and labels on them,
@@ -86,16 +86,13 @@ with image.imports():
     from transformers import DetrForObjectDetection, DetrImageProcessor
 
 
-@app.cls(
-    cpu=4,
-    image=image,
-)
+@app.cls(image=image)
 class ObjectDetection:
-    @build()
+    @modal.build()
     def download_model(self):
         snapshot_download(repo_id=model_repo_id, cache_dir="/cache")
 
-    @enter()
+    @modal.enter()
     def load_model(self):
         self.feature_extractor = DetrImageProcessor.from_pretrained(
             model_repo_id,
@@ -106,7 +103,7 @@ class ObjectDetection:
             cache_dir="/cache",
         )
 
-    @method()
+    @modal.method()
     def detect(self, img_data_in):
         # Based on https://huggingface.co/spaces/nateraw/detr-object-detection/blob/main/app.py
         # Read png from input
@@ -154,53 +151,52 @@ class ObjectDetection:
 
 
 # ## Defining the web interface
-#
+
 # To keep things clean, we define the web endpoints separate from the prediction
 # function. This will introduce a tiny bit of extra latency (every web request
 # triggers a Modal function call which will call another Modal function) but in
 # practice the overhead is much smaller than the overhead of running the prediction
 # function etc.
-#
+
 # We also serve a static html page which contains some tiny bit of Javascript to
 # capture the webcam feed and send it to Modal.
 
-web_app = FastAPI()
 static_path = Path(__file__).with_name("webcam").resolve()
 
 
-# The endpoint for the prediction function takes an image as a
-# [data URI](https://en.wikipedia.org/wiki/Data_URI_scheme)
-# and returns another image, also as a data URI:
-
-
-@web_app.post("/predict")
-async def predict(request: Request):
-    # Takes a webcam image as a datauri, returns a bounding box image as a datauri
-    body = await request.body()
-    img_data_in = base64.b64decode(body.split(b",")[1])  # read data-uri
-    img_data_out = ObjectDetection().detect.remote(img_data_in)
-    output_data = b"data:image/png;base64," + base64.b64encode(img_data_out)
-    return Response(content=output_data)
-
-
-# ## Exposing the web server
-#
-# Let's take the Fast API app and expose it to Modal.
-
-
 @app.function(
-    mounts=[Mount.from_local_dir(static_path, remote_path="/assets")],
+    image=modal.Image.debian_slim(python_version="3.12")
+    .pip_install("fastapi[standard]==0.115.4")
+    .add_local_dir(static_path, remote_path="/assets")
 )
-@asgi_app()
+@modal.asgi_app(label="example-webcam-object-detection")
 def fastapi_app():
+    from fastapi import FastAPI, Request, Response
+    from fastapi.staticfiles import StaticFiles
+
+    web_app = FastAPI()
+
+    # The endpoint for the prediction function takes an image as a
+    # [data URI](https://en.wikipedia.org/wiki/Data_URI_scheme)
+    # and returns another image, also as a data URI:
+
+    @web_app.post("/predict")
+    async def predict(request: Request):
+        # Takes a webcam image as a datauri, returns a bounding box image as a datauri
+        body = await request.body()
+        img_data_in = base64.b64decode(body.split(b",")[1])  # read data-uri
+        img_data_out = ObjectDetection().detect.remote(img_data_in)
+        output_data = b"data:image/png;base64," + base64.b64encode(img_data_out)
+        return Response(content=output_data)
+
     web_app.mount("/", StaticFiles(directory="/assets", html=True))
     return web_app
 
 
 # ## Running this locally
-#
+
 # You can run this as an ephemeral app, by running
-#
+
 # ```shell
 # modal serve webcam.py
 # ```

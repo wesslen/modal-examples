@@ -1,4 +1,5 @@
 import argparse
+import os
 import re
 import shlex
 import subprocess
@@ -20,6 +21,7 @@ def deploy(
     module_with_app: Path,
     dry_run: bool,
     filter_pttrn: Optional[str],
+    env: Optional[dict[str, str]],
 ) -> Optional[DeployError]:
     if filter_pttrn and not re.match(filter_pttrn, module_with_app.name):
         return None
@@ -37,6 +39,7 @@ def deploy(
             shlex.split(deploy_command),
             cwd=module_with_app.parent,
             capture_output=True,
+            env=os.environ | (env or {}),
         )
         if r.returncode != 0:
             print(
@@ -85,9 +88,10 @@ def main(argv: Optional[list[str]] = None) -> int:
     results = [
         deploy(
             deployable=bool(ex_mod.metadata.get("deploy")),
-            module_with_app=Path(ex_mod.filename),
+            module_with_app=Path(ex_mod.module),
             dry_run=arguments.dry_run,
             filter_pttrn=filter_pttrn,
+            env=ex_mod.metadata.get("env"),
         )
         for ex_mod in example_modules
     ]

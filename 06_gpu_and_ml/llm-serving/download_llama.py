@@ -1,12 +1,13 @@
 # ---
 # args: ["--force-download"]
 # ---
+
 import modal
 
 MODELS_DIR = "/llamas"
 
-DEFAULT_NAME = "meta-llama/Meta-Llama-3.1-8B-Instruct"
-DEFAULT_REVISION = "8c22764a7e3675c50d4c7c9a4edb474456022b16"
+DEFAULT_NAME = "neuralmagic/Meta-Llama-3.1-8B-Instruct-quantized.w4a16"
+DEFAULT_REVISION = "a7c09948d9a632c2c840722f519672cd94af885d"
 
 volume = modal.Volume.from_name("llamas", create_if_missing=True)
 
@@ -27,7 +28,10 @@ HOURS = 60 * MINUTES
 
 
 app = modal.App(
-    image=image, secrets=[modal.Secret.from_name("huggingface-secret")]
+    image=image,
+    # secrets=[  # add a Hugging Face Secret if you need to download a gated model
+    #     modal.Secret.from_name("huggingface-secret", required_keys=["HF_TOKEN"])
+    # ],
 )
 
 

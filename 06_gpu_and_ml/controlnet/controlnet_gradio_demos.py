@@ -1,21 +1,20 @@
 # ---
 # cmd: ["modal", "serve", "06_gpu_and_ml/controlnet/controlnet_gradio_demos.py"]
-# deploy: false
 # ---
-#
+
 # # Play with the ControlNet demos
-#
+
 # This example allows you to play with all 10 demonstration Gradio apps from the new and amazing ControlNet project.
 # ControlNet provides a minimal interface allowing users to use images to constrain StableDiffusion's generation process.
 # With ControlNet, users can easily condition the StableDiffusion image generation with different spatial contexts
 # including a depth maps, segmentation maps, scribble drawings, and keypoints!
-#
+
 # <center>
 # <video controls>
 # <source src="https://user-images.githubusercontent.com/12058921/222927911-3ab52dd1-f2ee-4fb8-97e8-dafbf96ed5c5.mp4" type="video/mp4">
 # </video>
 # </center>
-#
+
 # ## Imports and config preamble
 
 import importlib
@@ -23,14 +22,14 @@ import os
 import pathlib
 from dataclasses import dataclass, field
 
+import modal
 from fastapi import FastAPI
-from modal import App, Image, Secret, asgi_app
 
 # Below are the configuration objects for all **10** demos provided in the original [lllyasviel/ControlNet](https://github.com/lllyasviel/ControlNet) repo.
 # The demos each depend on their own custom pretrained StableDiffusion model, and these models are 5-6GB each.
 # We can only run one demo at a time, so this module avoids downloading the model and 'detector' dependencies for
 # all 10 demos and instead uses the demo configuration object to download only what's necessary for the chosen demo.
-#
+
 # Even just limiting our dependencies setup to what's required for one demo, the resulting container image is *huge*.
 
 
@@ -128,7 +127,7 @@ demos = [
 demos_map: dict[str, DemoApp] = {d.name: d for d in demos}
 
 # ## Pick a demo, any demo
-#
+
 # Simply by changing the `DEMO_NAME` below, you can change which ControlNet demo app is setup
 # and run by this Modal script.
 
@@ -136,21 +135,21 @@ DEMO_NAME = "scribble2image"  # Change this value to change the active demo app.
 selected_demo = demos_map[DEMO_NAME]
 
 # ## Setting up the dependencies
-#
+
 # ControlNet requires *a lot* of dependencies which could be fiddly to setup manually, but Modal's programmatic
 # container image building Python APIs handle this complexity straightforwardly and automatically.
-#
+
 # To run any of the 10 demo apps, we need the following:
-#
+
 # 1. a base Python 3 Linux image (we use Debian Slim)
 # 2. a bunch of third party PyPi packages
 # 3. `git`, so that we can download the ControlNet source code (there's no `controlnet` PyPi package)
 # 4. some image process Linux system packages, including `ffmpeg`
 # 5. and demo specific pre-trained model and detector `.pth` files
-#
+
 # That's a lot! Fortunately, the code below is already written for you that stitches together a working container image
 # ready to produce remarkable ControlNet images.
-#
+
 # **Note:** a ControlNet model pipeline is [now available in Huggingface's `diffusers` package](https://huggingface.co/blog/controlnet). But this does not contain the demo apps.
 
 
@@ -197,8 +196,11 @@ def download_demo_files() -> None:
 
 
 image = (
-    Image.debian_slim(python_version="3.10")
+    modal.Image.debian_slim(python_version="3.10")
     .pip_install(
+        "fastapi[standard]==0.115.4",
+        "pydantic==2.9.1",
+        "starlette==0.41.2",
         "gradio==3.16.2",
         "albumentations==1.3.0",
         "opencv-contrib-python",
@@ -238,15 +240,15 @@ image = (
     .apt_install("ffmpeg", "libsm6", "libxext6")
     .run_function(
         download_demo_files,
-        secrets=[Secret.from_dict({"DEMO_NAME": DEMO_NAME})],
+        secrets=[modal.Secret.from_dict({"DEMO_NAME": DEMO_NAME})],
     )
 )
-app = App(name="example-controlnet", image=image)
+app = modal.App(name="example-controlnet", image=image)
 
 web_app = FastAPI()
 
 # ## Serving the Gradio web UI
-#
+
 # Each ControlNet gradio demo module exposes a `block` Gradio interface running in queue-mode,
 # which is initialized in module scope on import and served on `0.0.0.0`. We want the block interface object,
 # but the queueing and launched webserver aren't compatible with Modal's serverless web endpoint interface,
@@ -290,7 +292,7 @@ def import_gradio_app_blocks(demo: DemoApp):
     concurrency_limit=1,
     container_idle_timeout=600,
 )
-@asgi_app()
+@modal.asgi_app()
 def run():
     from gradio.routes import mount_gradio_app
 
@@ -303,9 +305,9 @@ def run():
 
 
 # ## Have fun!
-#
+
 # Serve your chosen demo app with `modal serve controlnet_gradio_demos.py`. If you don't have any images ready at hand,
 # try one that's in the `06_gpu_and_ml/controlnet/demo_images/` folder.
-#
+
 # StableDiffusion was already impressive enough, but ControlNet's ability to so accurately and intuitively constrain
 # the image generation process is sure to put a big, dumb grin on your face.

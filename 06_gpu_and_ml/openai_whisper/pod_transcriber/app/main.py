@@ -9,25 +9,17 @@ import json
 import pathlib
 from typing import Iterator, Tuple
 
-from modal import (
-    App,
-    Dict,
-    Image,
-    Mount,
-    NetworkFileSystem,
-    Secret,
-    asgi_app,
-)
+import modal
 
 from . import config, podcast, search
 
 logger = config.get_logger(__name__)
-volume = NetworkFileSystem.from_name(
+volume = modal.NetworkFileSystem.from_name(
     "dataset-cache-vol", create_if_missing=True
 )
 
 app_image = (
-    Image.debian_slim(python_version="3.10")
+    modal.Image.debian_slim(python_version="3.10")
     .apt_install("git")
     .pip_install(
         "git+https://github.com/openai/whisper.git",
@@ -35,28 +27,28 @@ app_image = (
         "jiwer",
         "ffmpeg-python",
         "gql[all]~=3.0.0a5",
-        "python-multipart~=0.0.9",
         "pandas",
         "loguru==0.6.0",
         "torchaudio==2.1.0",
+        "fastapi[standard]==0.115.4",
     )
     .apt_install("ffmpeg")
     .pip_install("ffmpeg-python")
 )
-search_image = Image.debian_slim(python_version="3.10").pip_install(
+search_image = modal.Image.debian_slim(python_version="3.10").pip_install(
     "scikit-learn~=1.3.0",
     "tqdm~=4.46.0",
     "numpy~=1.23.3",
     "dacite",
 )
 
-app = App(
+app = modal.App(
     "whisper-pod-transcriber",
     image=app_image,
-    secrets=[Secret.from_name("podchaser")],
+    secrets=[modal.Secret.from_name("podchaser")],
 )
 
-in_progress = Dict.from_name(
+in_progress = modal.Dict.from_name(
     "pod-transcriber-in-progress", create_if_missing=True
 )
 
@@ -101,11 +93,11 @@ def populate_podcast_metadata(podcast_id: str):
 
 
 @app.function(
-    mounts=[Mount.from_local_dir(config.ASSETS_PATH, remote_path="/assets")],
+    image=app_image.add_local_dir(config.ASSETS_PATH, remote_path="/assets"),
     network_file_systems={config.CACHE_DIR: volume},
     keep_warm=2,
 )
-@asgi_app()
+@modal.asgi_app()
 def fastapi_app():
     import fastapi.staticfiles
 
@@ -118,9 +110,7 @@ def fastapi_app():
     return web_app
 
 
-@app.function(
-    image=app_image,
-)
+@app.function()
 def search_podcast(name):
     from gql import gql
 
