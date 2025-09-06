@@ -12,10 +12,8 @@ import modal
 # Next, define an app, with a custom image that installs `sklearn`.
 
 app = modal.App(
-    "import-sklearn",
-    image=modal.Image.debian_slim()
-    .apt_install("libgomp1")
-    .pip_install("scikit-learn"),
+    "example-import-sklearn",
+    image=modal.Image.debian_slim().apt_install("libgomp1").pip_install("scikit-learn"),
 )
 
 # The `app.image.imports()` lets us conditionally import in the global scope.

@@ -1,7 +1,6 @@
 # ---
-# cmd: ["modal", "run", "13_sandboxes.codelangchain.agent", "--question", "Use gpt2 and transformers to generate text"]
+# cmd: ["modal", "run", "-m", "13_sandboxes.codelangchain.agent", "--question", "Use gpt2 and transformers to generate text"]
 # pytest: false
-# env: {"MODAL_AUTOMOUNT": "True"}
 # ---
 
 # # Build a coding agent with Modal Sandboxes and LangGraph
@@ -29,15 +28,11 @@ from .src.common import COLOR, PYTHON_VERSION, image
 # and use the provided templates for OpenAI and LangSmith.
 
 app = modal.App(
-    "example-code-langchain",
+    "example-agent",
     image=image,
     secrets=[
-        modal.Secret.from_name(
-            "openai-secret", required_keys=["OPENAI_API_KEY"]
-        ),
-        modal.Secret.from_name(
-            "langsmith-secret", required_keys=["LANGCHAIN_API_KEY"]
-        ),
+        modal.Secret.from_name("openai-secret", required_keys=["OPENAI_API_KEY"]),
+        modal.Secret.from_name("langsmith-secret", required_keys=["LANGCHAIN_API_KEY"]),
     ],
 )
 
@@ -51,9 +46,7 @@ app = modal.App(
 def create_sandbox(app) -> modal.Sandbox:
     # Change this image (and the retrieval logic in the retrieval module)
     # if you want the agent to give coding advice on other libraries!
-    agent_image = modal.Image.debian_slim(
-        python_version=PYTHON_VERSION
-    ).pip_install(
+    agent_image = modal.Image.debian_slim(python_version=PYTHON_VERSION).pip_install(
         "torch==2.5.0",
         "transformers==4.46.0",
     )
@@ -69,7 +62,7 @@ def create_sandbox(app) -> modal.Sandbox:
 
 
 # We also need a way to run our code in the sandbox. For this, we'll write a simple wrapper
-# around the Modal Sandox `exec` method. We use `exec` because it allows us to run code without spinning up a
+# around the Modal Sandbox `exec` method. We use `exec` because it allows us to run code without spinning up a
 # new container. And we can reuse the same container for multiple runs, preserving state.
 
 
@@ -169,7 +162,7 @@ def go(
 # [from our examples repo](https://github.com/modal-labs/modal-examples/tree/main/13_sandboxes/codelangchain):
 
 # ```bash
-# modal run codelangchain.agent --question "How do I run a pre-trained model from the transformers library?"
+# modal run -m codelangchain.agent --question "How do I run a pre-trained model from the transformers library?"
 # ```
 
 
@@ -191,7 +184,7 @@ def main(
 # If things are working properly, you should see output like the following:
 
 # ```bash
-# $ modal run agent.py --question "generate some cool output with transformers"
+# $ modal run -m codelangchain.agent --question "generate some cool output with transformers"
 # ---DECISION: FINISH---
 # ---FINISHING---
 # To generate some cool output using transformers, we can use a pre-trained language model from the Hugging Face Transformers library. In this example, we'll use the GPT-2 model to generate text based on a given prompt. The GPT-2 model is a popular choice for text generation tasks due to its ability to produce coherent and contextually relevant text. We'll use the pipeline API from the Transformers library, which simplifies the process of using pre-trained models for various tasks, including text generation.

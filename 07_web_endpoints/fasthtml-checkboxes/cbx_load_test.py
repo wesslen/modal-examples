@@ -5,11 +5,11 @@ from pathlib import Path
 import modal
 
 if modal.is_local():
-    workspace = modal.config._profile
-    environment = modal.config.config["environment"]
+    workspace = modal.config._profile or ""
+    environment = modal.config.config["environment"] or ""
 else:
-    workspace = os.environ["MODAL_WORKSPACE"]
-    environment = os.environ["MODAL_ENVIRONMENT"]
+    workspace = os.environ["MODAL_WORKSPACE"] or ""
+    environment = os.environ["MODAL_ENVIRONMENT"] or ""
 
 
 image = (
@@ -25,18 +25,14 @@ image = (
         remote_path="/root/constants.py",
     )
 )
-volume = modal.Volume.from_name(
-    "loadtest-checkboxes-results", create_if_missing=True
-)
+volume = modal.Volume.from_name("example-cbx-load-test-results", create_if_missing=True)
 remote_path = Path("/root") / "loadtests"
-OUT_DIRECTORY = (
-    remote_path / datetime.utcnow().replace(microsecond=0).isoformat()
-)
+OUT_DIRECTORY = remote_path / datetime.utcnow().replace(microsecond=0).isoformat()
 
-app = modal.App("loadtest-checkbox", image=image, volumes={remote_path: volume})
+app = modal.App("example-cbx-load-test", image=image, volumes={remote_path: volume})
 
 workers = 8
-host = f"https://{workspace}{'-' + environment if environment else ''}--example-checkboxes-web.modal.run"
+host = f"https://{workspace}{'-' + environment if environment else ''}--example-fasthtml-checkboxes-web.modal.run"
 csv_file = OUT_DIRECTORY / "stats.csv"
 default_args = [
     "-H",
@@ -50,7 +46,8 @@ default_args = [
 MINUTES = 60  # seconds
 
 
-@app.function(allow_concurrent_inputs=1000, cpu=workers)
+@app.function(cpu=workers)
+@modal.concurrent(max_inputs=1000)
 @modal.web_server(port=8089)
 def serve():
     run_locust.local(default_args)

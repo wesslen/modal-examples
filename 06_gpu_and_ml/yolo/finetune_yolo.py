@@ -1,5 +1,6 @@
 # ---
 # args: ["--no-quick-check"]
+# mypy: ignore-errors
 # ---
 
 # # Fine-tune open source YOLO models for object detection
@@ -45,15 +46,16 @@ image = (
     )
 )
 
-# We also create a persistent [Volume](https://modal.com/docs/guide/volumes) for storing datasets, trained weights, and inference outputs.
+# We also create a persistent [Volume](https://modal.com/docs/guide/volumes) for storing datasets, trained weights, and inference outputs. For more on storing model weights on Modal, see
+# [this guide](https://modal.com/docs/guide/model-weights).
 
-volume = modal.Volume.from_name("yolo-finetune", create_if_missing=True)
+volume = modal.Volume.from_name("example-yolo-finetune", create_if_missing=True)
 volume_path = (  # the path to the volume from within the container
     Path("/root") / "data"
 )
 
 # We attach both of these to a Modal [App](https://modal.com/docs/guide/apps).
-app = modal.App("yolo-finetune", image=image, volumes={volume_path: volume})
+app = modal.App("example-yolo-finetune", image=image, volumes={volume_path: volume})
 
 
 # ## Download a dataset
@@ -89,9 +91,7 @@ class DatasetConfig:
 
 @app.function(
     secrets=[
-        modal.Secret.from_name(
-            "roboflow-api-key", required_keys=["ROBOFLOW_API_KEY"]
-        )
+        modal.Secret.from_name("roboflow-api-key", required_keys=["ROBOFLOW_API_KEY"])
     ]
 )
 def download_dataset(config: DatasetConfig):
@@ -116,7 +116,7 @@ def download_dataset(config: DatasetConfig):
 MINUTES = 60
 
 TRAIN_GPU_COUNT = 1
-TRAIN_GPU = modal.gpu.A100(count=TRAIN_GPU_COUNT)
+TRAIN_GPU = f"A100:{TRAIN_GPU_COUNT}"
 TRAIN_CPU_COUNT = 4
 
 
@@ -149,9 +149,7 @@ def train(
         else 0.04,  # fraction of dataset to use for training/validation
         # optimization config
         device=list(range(TRAIN_GPU_COUNT)),  # use the GPU(s)
-        epochs=8
-        if not quick_check
-        else 1,  # pass over entire dataset this many times
+        epochs=8 if not quick_check else 1,  # pass over entire dataset this many times
         batch=0.95,  # automatic batch size to target fraction of GPU util
         seed=117,  # set seed for reproducibility
         # data processing config
@@ -193,8 +191,7 @@ def read_image(image_path: str):
 
 @app.cls(gpu="a10g")
 class Inference:
-    def __init__(self, weights_path):
-        self.weights_path = weights_path
+    weights_path: str = modal.parameter()
 
     @modal.enter()
     def load_model(self):
@@ -227,9 +224,7 @@ class Inference:
         import os
         import time
 
-        image_files = [
-            os.path.join(batch_dir, f) for f in os.listdir(batch_dir)
-        ]
+        image_files = [os.path.join(batch_dir, f) for f in os.listdir(batch_dir)]
 
         completed, start = 0, time.monotonic_ns()
         for image in read_image.map(image_files):
@@ -313,7 +308,7 @@ def main(quick_check: bool = True, inference_only: bool = False):
     # let's run inference!
     for model_id, dataset in zip(model_ids, datasets):
         inference = Inference(
-            volume_path / "runs" / model_id / "weights" / "best.pt"
+            weights_path=str(volume_path / "runs" / model_id / "weights" / "best.pt")
         )
 
         # predict on a single image and save output to the volume
@@ -334,9 +329,7 @@ def main(quick_check: bool = True, inference_only: bool = False):
                 break
 
         # streaming inference on images from the test set
-        print(
-            f"{model_id}: Streaming inferences on all images in the test set..."
-        )
+        print(f"{model_id}: Streaming inferences on all images in the test set...")
         count = 0
         for detection in inference.streaming_count.remote_gen(
             batch_dir=f"{volume_path}/dataset/{dataset.id}/test/images"

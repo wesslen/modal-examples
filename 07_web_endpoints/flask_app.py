@@ -1,5 +1,5 @@
 # ---
-# lambda-test: false
+# cmd: ["modal", "serve", "07_web_endpoints/flask_app.py"]
 # ---
 
 # # Deploy Flask app with Modal
@@ -10,7 +10,7 @@
 import modal
 
 app = modal.App(
-    "example-web-flask",
+    "example-flask-app",
     image=modal.Image.debian_slim().pip_install("flask"),
 )
 

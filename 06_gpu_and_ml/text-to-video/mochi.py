@@ -11,7 +11,7 @@
 
 # <center>
 # <video controls autoplay loop muted>
-# <source src="https://modal-public-assets.s3.us-east-1.amazonaws.com/modal-logo-splat.mp4" type="video/mp4" />
+# <source src="https://modal-cdn.com/modal-logo-splat.mp4" type="video/mp4" />
 # </video>
 # </center>
 
@@ -37,7 +37,7 @@ from pathlib import Path
 
 import modal
 
-app = modal.App()
+app = modal.App("example-mochi")
 
 image = (
     modal.Image.debian_slim(python_version="3.11")
@@ -80,7 +80,8 @@ HOURS = 60 * MINUTES
 
 # ## Downloading the model
 
-# We download the model weights into Volume cache to speed up cold starts.
+# We download the model weights into Volume cache to speed up cold starts. For more on storing model weights on Modal, see
+# [this guide](https://modal.com/docs/guide/model-weights).
 
 # This download takes five minutes or more, depending on traffic
 # and network speed.
@@ -133,7 +134,7 @@ def download_model(revision="83359d26a7e2bbe200ecbfda8ebff850fd03b545"):
         OUTPUTS_PATH: outputs,  # videos will be saved to a distributed volume
         MODEL_PATH: model,
     },
-    gpu=modal.gpu.H100(count=1),
+    gpu="H100",
     timeout=1 * HOURS,
 )
 class Mochi:

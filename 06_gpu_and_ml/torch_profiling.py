@@ -21,7 +21,7 @@
 # so by default these files disappear as soon as the Function finishes running.
 
 # We can ensure these files persist by saving them to a
-# [Modal Volume](https://modal.com/docs/guide/volume).
+# [Modal Volume](https://modal.com/docs/guide/volumes).
 # Volumes are a distributed file system: files can be read or written from
 # by many machines across a network, in this case from inside any Modal Function.
 
@@ -31,6 +31,7 @@
 
 
 from pathlib import Path
+from typing import Optional
 
 import modal
 
@@ -115,7 +116,7 @@ def underutilize(scale=1):
 @app.function(volumes={TRACE_DIR: traces}, **config)
 def profile(
     function,
-    label: str = None,
+    label: Optional[str] = None,
     steps: int = 3,
     schedule=None,
     record_shapes: bool = False,
@@ -134,17 +135,13 @@ def profile(
     function_name = function.tag
 
     output_dir = (
-        TRACE_DIR
-        / (function_name + (f"_{label}" if label else ""))
-        / str(uuid4())
+        TRACE_DIR / (function_name + (f"_{label}" if label else "")) / str(uuid4())
     )
     output_dir.mkdir(parents=True, exist_ok=True)
 
     if schedule is None:
         if steps < 3:
-            raise ValueError(
-                "Steps must be at least 3 when using default schedule"
-            )
+            raise ValueError("Steps must be at least 3 when using default schedule")
         schedule = {"wait": 1, "warmup": 1, "active": steps - 2, "repeat": 0}
 
     schedule = torch.profiler.schedule(**schedule)
@@ -166,9 +163,7 @@ def profile(
 
     if print_rows:
         print(
-            prof.key_averages().table(
-                sort_by="cuda_time_total", row_limit=print_rows
-            )
+            prof.key_averages().table(sort_by="cuda_time_total", row_limit=print_rows)
         )
 
     trace_path = sorted(
@@ -195,14 +190,14 @@ def profile(
 @app.local_entrypoint()
 def main(
     function: str = "underutilize",
-    label: str = None,
+    label: Optional[str] = None,
     steps: int = 3,
     schedule=None,
     record_shapes: bool = False,
     profile_memory: bool = False,
     with_stack: bool = False,
     print_rows: int = 10,
-    kwargs_json_path: str = None,
+    kwargs_json_path: Optional[str] = None,
 ):
     if kwargs_json_path is not None:  # use to pass arguments to function
         import json
@@ -299,10 +294,10 @@ class VolumeMiddleware:
 @app.function(
     volumes={TRACE_DIR: traces},
     image=tb_image,
-    concurrency_limit=1,  # single replica
-    allow_concurrent_inputs=100,  # 100 concurrent request threads
-    container_idle_timeout=5 * 60,  # five minute idle time
+    max_containers=1,  # single replica
+    scaledown_window=5 * 60,  # five minute idle time
 )
+@modal.concurrent(max_inputs=100)  # 100 concurrent request threads
 @modal.wsgi_app()
 def tensorboard():
     import tensorboard

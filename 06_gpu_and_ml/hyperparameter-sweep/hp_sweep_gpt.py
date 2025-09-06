@@ -50,6 +50,7 @@ import logging as L
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path, PosixPath
+from typing import Optional
 
 import modal
 from pydantic import BaseModel
@@ -71,9 +72,7 @@ gpu = "A10G"
 # distributed [Volume](https://modal.com/docs/guide/volumes)
 # to store the data, checkpointed models, and TensorBoard logs.
 
-volume = modal.Volume.from_name(
-    "example-hp-sweep-gpt-volume", create_if_missing=True
-)
+volume = modal.Volume.from_name("example-hp-sweep-gpt-volume", create_if_missing=True)
 volume_path = PosixPath("/vol/data")
 model_filename = "nano_gpt_model.pt"
 best_model_filename = "best_nano_gpt_model.pt"
@@ -102,9 +101,7 @@ torch_image = torch_image.add_local_dir(
 )
 
 # We'll serve a simple web endpoint:
-web_image = base_image.pip_install(
-    "fastapi[standard]==0.115.4", "starlette==0.41.2"
-)
+web_image = base_image.pip_install("fastapi[standard]==0.115.4", "starlette==0.41.2")
 
 # And we'll deploy a web UI for interacting with our trained models using Gradio.
 assets_path = Path(__file__).parent / "assets"
@@ -169,7 +166,7 @@ def train_model(
 
     L.basicConfig(
         level=L.INFO,
-        format=f"\033[0;32m%(asctime)s %(levelname)s [%(filename)s.%(funcName)s:%(lineno)d] [Node {node_rank+1}] %(message)s\033[0m",
+        format=f"\033[0;32m%(asctime)s %(levelname)s [%(filename)s.%(funcName)s:%(lineno)d] [Node {node_rank + 1}] %(message)s\033[0m",
         datefmt="%b %d %H:%M:%S",
     )
 
@@ -198,9 +195,7 @@ def train_model(
     optimizer = setup_optimizer(model, learning_rate)
 
     # TensorBoard logging & checkpointing prep
-    logs_manager = LogsManager(
-        experiment_name, hparams, num_parameters, tb_log_path
-    )
+    logs_manager = LogsManager(experiment_name, hparams, num_parameters, tb_log_path)
     L.info(f"Model name: {logs_manager.model_name}")
 
     model_save_dir = model_save_path / experiment_name / logs_manager.model_name
@@ -209,17 +204,13 @@ def train_model(
         checkpoint = torch.load(str(model_save_dir / model_filename))
         is_best_model = not run_to_first_save
         if is_best_model:
-            make_best_symbolic_link(
-                model_save_dir, model_filename, experiment_name
-            )
+            make_best_symbolic_link(model_save_dir, model_filename, experiment_name)
         model.load_state_dict(checkpoint["model"])
         start_step = checkpoint["steps"] + 1
     else:
         model_save_dir.mkdir(parents=True, exist_ok=True)
         start_step = 0
-        checkpoint = init_checkpoint(
-            model, tokenizer, optimizer, start_step, hparams
-        )
+        checkpoint = init_checkpoint(model, tokenizer, optimizer, start_step, hparams)
 
     checkpoint_path = model_save_dir / model_filename
 
@@ -274,7 +265,7 @@ class ModelHyperparameters:
 # You can kick off training with the following command:
 
 # ```bash
-# modal run 06_gpu_and_ml.hyperparameter-sweep.hp_sweep_gpt
+# modal run 06_gpu_and_ml/hyperparameter-sweep/hp_sweep_gpt.py
 # ```
 
 # The output will look something like this:
@@ -295,8 +286,8 @@ class ModelHyperparameters:
 @app.local_entrypoint()
 def main(
     n_steps: int = 3000,
-    n_steps_before_checkpoint: int = None,
-    n_steps_before_eval: int = None,
+    n_steps_before_checkpoint: Optional[int] = None,
+    n_steps_before_eval: Optional[int] = None,
 ):
     from datetime import datetime
     from itertools import product
@@ -311,9 +302,7 @@ def main(
 
     hparams_list = [
         ModelHyperparameters(n_heads=h, context_size=c, dropout=d)
-        for h, c, d in product(
-            nheads_options, context_size_options, dropout_options
-        )
+        for h, c, d in product(nheads_options, context_size_options, dropout_options)
     ]
 
     # run training for each hyperparameter setting
@@ -336,8 +325,7 @@ def main(
         node_rank = result[0]
         results.append(result)
         print(
-            f"[Node {node_rank+1}/{n_nodes}] Finished."
-            f" Early stop val loss result: {result[1:]}"
+            f"[Node {node_rank + 1}/{n_nodes}] Finished. Early stop val loss result: {result[1:]}"
         )
 
     # find the model and hparams with the lowest validation loss
@@ -366,6 +354,26 @@ def main(
 # display the progress of our training across all 8 models. We'll use the latest
 # logs for the most recent experiment written to the Volume.
 
+# To ensure we have the latest data we add some
+# [WSGI Middleware](https://peps.python.org/pep-3333/)
+# that checks the Modal Volume for updates when the page is reloaded.
+
+
+class VolumeMiddleware:
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        if (route := environ.get("PATH_INFO")) in ["/", "/modal-volume-reload"]:
+            try:
+                volume.reload()
+            except Exception as e:
+                print("Exception while re-loading traces: ", e)
+            if route == "/modal-volume-reload":
+                environ["PATH_INFO"] = "/"  # redirect
+        return self.app(environ, start_response)
+
+
 # To ensure a unique color per experiment you can click the palette (🎨) icon
 # under TensorBoard > Time Series > Run and use the Regex:
 # `E(\d{4})-(\d{2})-(\d{2})-(\d{6})\.(\d{6})`
@@ -373,7 +381,7 @@ def main(
 # You can deploy this TensorBoard service by running
 
 # ```
-# modal deploy 06_gpu_and_ml.hyperparameter-sweep.hp_sweep_gpt
+# modal deploy 06_gpu_and_ml/hyperparameter-sweep/hp_sweep_gpt.py
 # ```
 
 # and visit it at the URL that ends with `-monitor-training.modal.run`.
@@ -388,22 +396,10 @@ def main(
 @app.function(
     image=torch_image,
     volumes={volume_path: volume},
-    allow_concurrent_inputs=1000,
 )
+@modal.concurrent(max_inputs=1000)
 @modal.wsgi_app()
 def monitor_training():
-    import time
-
-    print("📈 TensorBoard: Waiting for logs...")
-    ct = 0
-    while not tb_log_path.exists():
-        ct += 1
-        if ct > 10:
-            raise Exception("No logs found after 10 seconds.")
-        volume.reload()  # make sure we have the latest data.
-        time.sleep(1)
-
-    # start TensorBoard server looking at all experiments
     board = tensorboard.program.TensorBoard()
     board.configure(logdir=str(tb_log_path))
     (data_provider, deprecated_multiplexer) = board._make_data_provider()
@@ -413,6 +409,7 @@ def monitor_training():
         data_provider,
         board.assets_zip_provider,
         deprecated_multiplexer,
+        experimental_middlewares=[VolumeMiddleware],
     )
     return wsgi_app
 
@@ -424,7 +421,9 @@ def monitor_training():
 
 # Because our weights are stored in a distributed Volume,
 # we can deploy an inference endpoint based off of them without any extra work --
-# and we can even check in on models while we're still training them!
+# and we can even check in on models while we're still training them! # For more on storing model weights on Modal, see
+# [this guide](https://modal.com/docs/guide/model-weights).
+
 
 # ### Remote inference with Modal `Cls`es
 
@@ -443,9 +442,7 @@ class ModelInference:
     def get_latest_available_model_dirs(self, n_last):
         """Find the latest models that have a best model checkpoint saved."""
         save_model_dirs = glob.glob(f"{model_save_path}/*")
-        sorted_model_dirs = sorted(
-            save_model_dirs, key=os.path.getctime, reverse=True
-        )
+        sorted_model_dirs = sorted(save_model_dirs, key=os.path.getctime, reverse=True)
 
         valid_model_dirs = []
         for latest_model_dir in sorted_model_dirs:
@@ -496,9 +493,7 @@ class ModelInference:
         self.tokenizer = Tokenizer(unique_chars)
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
-        self.model = AttentionModel(
-            self.tokenizer.vocab_size, hparams, self.device
-        )
+        self.model = AttentionModel(self.tokenizer.vocab_size, hparams, self.device)
         self.model.load_state_dict(checkpoint["model"])
         self.model.to(self.device)
 
@@ -513,12 +508,10 @@ class ModelInference:
         self.load_model_impl()  # load updated model if available
 
         n_new_tokens = 1000
-        return self.model.generate_from_text(
-            self.tokenizer, prompt, n_new_tokens
-        )
+        return self.model.generate_from_text(self.tokenizer, prompt, n_new_tokens)
 
 
-# ### Adding a simple `web_endpoint`
+# ### Adding a simple web endpoint
 
 # The `ModelInference` class above is available for use
 # from any other Python environment with the right Modal credentials
@@ -533,7 +526,7 @@ class GenerationRequest(BaseModel):
 
 
 @app.function(image=web_image)
-@modal.web_endpoint(method="POST", docs=True)
+@modal.fastapi_endpoint(method="POST", docs=True)
 def web_generate(request: GenerationRequest):
     output = ModelInference().generate.remote(request.prompt)
     return {"output": output}
@@ -580,10 +573,10 @@ def web_generate(request: GenerationRequest):
 
 @app.function(
     image=ui_image,
-    concurrency_limit=1,
+    max_containers=1,
     volumes={volume_path: volume},
-    allow_concurrent_inputs=1000,
 )
+@modal.concurrent(max_inputs=1000)
 @modal.asgi_app()
 def ui():
     import gradio as gr
@@ -595,9 +588,9 @@ def ui():
     def generate(text="", experiment_name=""):
         if not text:
             text = "\n"
-        generated = ModelInference(
-            experiment_name=experiment_name
-        ).generate.remote(text)
+        generated = ModelInference(experiment_name=experiment_name).generate.remote(
+            text
+        )
         return text + generated
 
     example_prompts = [
@@ -622,8 +615,8 @@ def ui():
         css = f.read()
 
     n_last = 20
-    experiment_names = (
-        ModelInference().get_latest_available_experiment_names.remote(n_last)
+    experiment_names = ModelInference().get_latest_available_experiment_names.remote(
+        n_last
     )
     theme = gr.themes.Default(
         primary_hue="green", secondary_hue="emerald", neutral_hue="neutral"
@@ -678,9 +671,7 @@ def ui():
             # add in a few examples to inspire users
             for ii, prompt in enumerate(example_prompts):
                 btn = gr.Button(prompt, variant="secondary")
-                btn.click(
-                    fn=lambda idx=ii: example_prompts[idx], outputs=input_box
-                )
+                btn.click(fn=lambda idx=ii: example_prompts[idx], outputs=input_box)
 
     # mount for execution on Modal
     return mount_gradio_app(
@@ -764,8 +755,7 @@ def training_loop(
             checkpoint["finished_training"] = step >= n_steps
 
             L.info(
-                f"Saving checkpoint to {checkpoint_path}"
-                f"\t {checkpoint['finished_training']})"
+                f"Saving checkpoint to {checkpoint_path}\t {checkpoint['finished_training']})"
             )
             save_checkpoint(checkpoint, checkpoint_path)
 
@@ -831,9 +821,7 @@ def init_checkpoint(model, tokenizer, optimizer, start_step, hparams):
 def log_evals(result, step, t_last, logs_manager):
     runtime_s = timer() - t_last
     L.info(
-        f"{step:5d}) // {runtime_s:>5.2f}s"
-        f" // Train Loss: {result['train']:.2f} // Val Loss:"
-        f" {result['val']:.2f}"
+        f"{step:5d}) // {runtime_s:>5.2f}s // Train Loss: {result['train']:.2f} // Val Loss: {result['val']:.2f}"
     )
     logs_manager.add_val_scalar("Cross Entropy Loss", result["val"], step)
     logs_manager.add_val_text("Sample Output", result["sample"], step)

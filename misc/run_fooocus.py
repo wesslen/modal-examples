@@ -14,9 +14,7 @@ import modal
 # We then download the Fooocus repository.
 
 image = (
-    modal.Image.from_registry(
-        "nvidia/cuda:12.3.1-base-ubuntu22.04", add_python="3.10"
-    )
+    modal.Image.from_registry("nvidia/cuda:12.3.1-base-ubuntu22.04", add_python="3.10")
     .apt_install(
         "software-properties-common",
         "git",
@@ -61,7 +59,7 @@ def init_Fooocus():
     )
 
 
-GPU_CONFIG = modal.gpu.T4()
+GPU_CONFIG = "T4"
 image = image.run_function(init_Fooocus, gpu=GPU_CONFIG)
 
 # ## Run Fooocus

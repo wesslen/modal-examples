@@ -1,4 +1,5 @@
 "This example originally contributed by @sandeeppatra96 and @patraxo on GitHub"
+
 import logging
 import tempfile
 import traceback
@@ -105,16 +106,19 @@ trellis_image = (
 
 app = modal.App(name="example-trellis-3d")
 
+cache_dir = "/cache"
+cache_vol = modal.Volume.from_name("hf-hub-cache")
+
 
 @app.cls(
-    image=trellis_image,
-    gpu=modal.gpu.L4(count=1),
+    image=trellis_image.env({"HF_HUB_CACHE": cache_dir}),
+    gpu="L4",
     timeout=1 * HOURS,
-    container_idle_timeout=1 * MINUTES,
+    scaledown_window=1 * MINUTES,
+    volumes={cache_dir: cache_vol},
 )
 class Model:
     @modal.enter()
-    @modal.build()
     def initialize(self):
         import sys
 
@@ -184,9 +188,7 @@ class Model:
                     texture_size=texture_size,
                 )
 
-                temp_glb = tempfile.NamedTemporaryFile(
-                    suffix=".glb", delete=False
-                )
+                temp_glb = tempfile.NamedTemporaryFile(suffix=".glb", delete=False)
                 temp_path = temp_glb.name
                 logger.info(f"Exporting mesh to: {temp_path}")
                 glb.export(temp_path)
@@ -225,7 +227,7 @@ class Model:
                 detail=error_msg,
             )
 
-    @modal.web_endpoint(method="GET", docs=True)
+    @modal.fastapi_endpoint(method="GET", docs=True)
     async def generate(
         self,
         request: Request,

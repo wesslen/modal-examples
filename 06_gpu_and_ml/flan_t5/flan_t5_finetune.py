@@ -23,7 +23,7 @@ VOL_MOUNT_PATH = Path("/vol")
 # Other Flan-T5 models can be found [here](https://huggingface.co/docs/transformers/model_doc/flan-t5)
 BASE_MODEL = "google/flan-t5-base"
 
-image = modal.Image.debian_slim().pip_install(
+image = modal.Image.debian_slim(python_version="3.12").pip_install(
     "accelerate",
     "transformers",
     "torch",
@@ -31,17 +31,18 @@ image = modal.Image.debian_slim().pip_install(
     "tensorboard",
 )
 
-app = modal.App(name="example-news-summarizer", image=image)
+app = modal.App(name="example-flan-t5-finetune", image=image)
 output_vol = modal.Volume.from_name("finetune-volume", create_if_missing=True)
 
 # ### Handling preemption
 
 # As this finetuning job is long-running it's possible that it experiences a preemption.
-# The training code is robust to pre-emption events by periodically saving checkpoints and restoring
+# The training code is robust to preemption events by periodically saving checkpoints and restoring
 # from checkpoint on restart. But it's also helpful to observe in logs when a preemption restart has occurred,
 # so we track restarts with a `modal.Dict`.
 
-# See the [guide on preemptions](/docs/guide/preemption#preemption) for more details on preemption handling.
+# See the [guide on preemptions](https://modal.com/docs/guide/preemption#preemption)
+# for more details on preemption handling.
 
 restart_tracker_dict = modal.Dict.from_name(
     "finetune-restart-tracker", create_if_missing=True
@@ -119,10 +120,7 @@ def finetune(num_train_epochs: int = 1, size_percentage: int = 10):
         )
 
         labels["input_ids"] = [
-            [
-                l if l != tokenizer.pad_token_id else padding_token_id
-                for l in label
-            ]
+            [l if l != tokenizer.pad_token_id else padding_token_id for l in label]
             for label in labels["input_ids"]
         ]
 
@@ -212,7 +210,6 @@ def monitor():
 
 
 # ## Model Inference
-#
 
 
 @app.cls(volumes={VOL_MOUNT_PATH: output_vol})
@@ -229,9 +226,7 @@ class Summarizer:
             BASE_MODEL, cache_dir=VOL_MOUNT_PATH / "model/"
         )
 
-        self.summarizer = pipeline(
-            "summarization", tokenizer=tokenizer, model=model
-        )
+        self.summarizer = pipeline("summarization", tokenizer=tokenizer, model=model)
 
     @modal.method()
     def generate(self, input: str) -> str:
@@ -265,7 +260,7 @@ def main():
 
 # ```bash
 # modal run --detach flan_t5_finetune.py::finetune --num-train-epochs=1 --size-percentage=10
-# View the tensorboard logs at https://<username>--example-news-summarizer-monitor-dev.modal.run
+# View the tensorboard logs at https://<username>--example-flan-t5-finetune-monitor-dev.modal.run
 # ```
 
 # Then, you can invoke inference via the `local_entrypoint` with this command:

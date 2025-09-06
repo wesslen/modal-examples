@@ -1,5 +1,5 @@
 # ---
-# lambda-test: false
+# cmd: ["modal", "serve", "08_advanced/poll_delayed_result.py"]
 # ---
 
 # # Polling for a delayed result on Modal
@@ -14,7 +14,7 @@ import modal
 from modal.functions import FunctionCall
 from starlette.responses import HTMLResponse, RedirectResponse
 
-app = modal.App("example-poll")
+app = modal.App("example-poll-delayed-result")
 
 web_app = fastapi.FastAPI()
 

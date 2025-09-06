@@ -1,9 +1,12 @@
+# ---
+# mypy: ignore-errors
+# ---
 # # Run multiple instances of a model on a single GPU
 #
 # Many models are small enough to fit multiple instances onto a single GPU.
 # Doing so can dramatically reduce the number of GPUs needed to handle demand.
 #
-# We use `allow_concurrent_inputs` to allow multiple connections into the container
+# We use `@modal.concurrent` to allow multiple connections into the container
 # We load the model instances into a FIFO queue to ensure only one http handler can access it at once
 
 import asyncio
@@ -12,9 +15,23 @@ from contextlib import asynccontextmanager
 
 import modal
 
-image = modal.Image.debian_slim().pip_install("sentence-transformers==3.2.0")
+MODEL_PATH = "/model.bge"
 
-app = modal.App("gpu-packing", image=image)
+
+def download_model():
+    from sentence_transformers import SentenceTransformer
+
+    model = SentenceTransformer("BAAI/bge-small-en-v1.5")
+    model.save(MODEL_PATH)
+
+
+image = (
+    modal.Image.debian_slim(python_version="3.12")
+    .pip_install("sentence-transformers==3.2.0")
+    .run_function(download_model)
+)
+
+app = modal.App("example-gpu-packing", image=image)
 
 
 # ModelPool holds multiple instances of the model, using a queue
@@ -41,18 +58,15 @@ with image.imports():
 
 @app.cls(
     gpu="A10G",
-    concurrency_limit=1,  # Max one container for this app, for the sake of demoing concurrent_inputs
-    allow_concurrent_inputs=100,  # Allow concurrent inputs into our single container.
+    max_containers=1,  # Max one container for this app, for the sake of demoing concurrent_inputs
 )
+@modal.concurrent(max_inputs=100)  # Allow concurrent inputs into our single container.
 class Server:
-    def __init__(self, n_models=10):
-        self.model_pool = ModelPool()
-        self.n_models = n_models
+    n_models: int = modal.parameter(default=10)
 
-    @modal.build()
-    def download(self):
-        model = SentenceTransformer("BAAI/bge-small-en-v1.5")
-        model.save("/model.bge")
+    @modal.enter()
+    def init(self):
+        self.model_pool = ModelPool()
 
     @modal.enter()
     async def load_models(self):
@@ -83,7 +97,7 @@ class Server:
 @app.local_entrypoint()
 async def main(n_requests: int = 100):
     # We benchmark with 100 requests in parallel.
-    # Thanks to allow_concurrent_inputs=100, 100 requests will enter .predict() at the same time.
+    # Thanks to @modal.concurrent(), 100 requests will enter .predict() at the same time.
 
     sentences = ["Sentence {}".format(i) for i in range(n_requests)]
 

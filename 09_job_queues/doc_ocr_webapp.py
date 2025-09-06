@@ -3,17 +3,17 @@
 # cmd: ["modal", "serve", "09_job_queues/doc_ocr_webapp.py"]
 # ---
 
-# # Document OCR web app
+# # Serve a document OCR web app
 
 # This tutorial shows you how to use Modal to deploy a fully serverless
 # [React](https://reactjs.org/) + [FastAPI](https://fastapi.tiangolo.com/) application.
 # We're going to build a simple "Receipt Parser" web app that submits OCR transcription
-# tasks to a separate Modal app defined in the [Job Queue tutorial](https://modal.com/docs/examples/doc_ocr_jobs),
+# tasks to a separate Modal app defined in [another example](https://modal.com/docs/examples/doc_ocr_jobs),
 # polls until the task is completed, and displays
 # the results. Try it out for yourself
 # [here](https://modal-labs-examples--example-doc-ocr-webapp-wrapper.modal.run/).
 
-# ![receipt parser frontend](./receipt_parser_frontend.jpg)
+# [![Webapp frontend](https://modal-cdn.com/doc_ocr_frontend.jpg)](https://modal-labs-examples--example-doc-ocr-webapp-wrapper.modal.run/)
 
 # ## Basic setup
 
@@ -49,9 +49,7 @@ web_app = fastapi.FastAPI()
 
 @web_app.post("/parse")
 async def parse(request: fastapi.Request):
-    parse_receipt = modal.Function.lookup(
-        "example-doc-ocr-jobs", "parse_receipt"
-    )
+    parse_receipt = modal.Function.from_name("example-doc-ocr-jobs", "parse_receipt")
 
     form = await request.form()
     receipt = await form["receipt"].read()  # type: ignore
@@ -97,9 +95,7 @@ image = image.add_local_dir(local_assets_path, remote_path="/assets")
 @app.function(image=image)
 @modal.asgi_app()
 def wrapper():
-    web_app.mount(
-        "/", fastapi.staticfiles.StaticFiles(directory="/assets", html=True)
-    )
+    web_app.mount("/", fastapi.staticfiles.StaticFiles(directory="/assets", html=True))
     return web_app
 
 
@@ -128,4 +124,4 @@ def wrapper():
 # If successful, this will print a URL for your app that you can navigate to in
 # your browser 🎉 .
 
-# ![receipt parser processed](./receipt_parser_frontend_2.jpg)
+# [![Webapp frontend](https://modal-cdn.com/doc_ocr_frontend.jpg)](https://modal-labs-examples--example-doc-ocr-webapp-wrapper.modal.run/)

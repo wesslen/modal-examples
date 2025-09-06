@@ -1,6 +1,5 @@
 # ---
-# deploy: true
-# lambda-test: false
+# lambda-test: false  # long-running
 # ---
 #
 # This script demonstrated how to ingest the https://github.com/RosettaCommons/RoseTTAFold protein-folding
@@ -32,7 +31,7 @@ volume = modal.CloudBucketMount(
     secret=bucket_creds,
 )
 image = modal.Image.debian_slim().apt_install("wget")
-app = modal.App("example-rosettafold-dataset-import", image=image)
+app = modal.App("example-rosettafold", image=image)
 
 
 def start_monitoring_disk_space(interval: int = 30) -> None:
@@ -44,21 +43,17 @@ def start_monitoring_disk_space(interval: int = 30) -> None:
             statvfs = os.statvfs("/")
             free_space = statvfs.f_frsize * statvfs.f_bavail
             print(
-                f"{task_id} free disk space: {free_space / (1024 ** 3):.2f} GB",
+                f"{task_id} free disk space: {free_space / (1024**3):.2f} GB",
                 file=sys.stderr,
             )
             time.sleep(interval)
 
-    monitoring_thread = threading.Thread(
-        target=log_disk_space, args=(interval,)
-    )
+    monitoring_thread = threading.Thread(target=log_disk_space, args=(interval,))
     monitoring_thread.daemon = True
     monitoring_thread.start()
 
 
-def decompress_tar_gz(
-    file_path: pathlib.Path, extract_dir: pathlib.Path
-) -> None:
+def decompress_tar_gz(file_path: pathlib.Path, extract_dir: pathlib.Path) -> None:
     print(f"Decompressing {file_path} into {extract_dir}...")
     with tarfile.open(file_path, "r:gz") as tar:
         tar.extractall(path=extract_dir)
@@ -97,9 +92,7 @@ def copy_concurrent(src: pathlib.Path, dest: pathlib.Path) -> None:
             self.pool.join()
 
     with MultithreadedCopier(max_threads=24) as copier:
-        shutil.copytree(
-            src, dest, copy_function=copier.copy, dirs_exist_ok=True
-        )
+        shutil.copytree(src, dest, copy_function=copier.copy, dirs_exist_ok=True)
 
 
 @app.function(
@@ -115,9 +108,7 @@ def _do_part(url: str) -> None:
     p = subprocess.Popen(cmd, shell=True)
     returncode = p.wait()
     if returncode != 0:
-        raise RuntimeError(
-            f"Error in downloading. {p.args!r} failed {returncode=}"
-        )
+        raise RuntimeError(f"Error in downloading. {p.args!r} failed {returncode=}")
     decompressed = pathlib.Path("/tmp/rosettafold/", name)
 
     # Decompression is much faster against the container's local SSD disk

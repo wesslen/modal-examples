@@ -18,9 +18,10 @@ import time
 import modal
 
 app = modal.App(
-    image=modal.Image.debian_slim().pip_install(
+    "example-jupyter-inside-modal",
+    image=modal.Image.debian_slim(python_version="3.12").pip_install(
         "jupyter", "bing-image-downloader~=1.1.2"
-    )
+    ),
 )
 volume = modal.Volume.from_name(
     "modal-examples-jupyter-inside-modal-data", create_if_missing=True
@@ -54,7 +55,7 @@ def seed_volume():
 # without having to download it to your host computer.
 
 
-@app.function(concurrency_limit=1, volumes={CACHE_DIR: volume}, timeout=1_500)
+@app.function(max_containers=1, volumes={CACHE_DIR: volume}, timeout=1_500)
 def run_jupyter(timeout: int):
     jupyter_port = 8888
     with modal.forward(jupyter_port) as tunnel:

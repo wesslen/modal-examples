@@ -19,7 +19,7 @@
 # To experience the full power of Modal, try scaling inference up and running on hundreds or thousands of structures!
 
 # <center>
-# <a href="https://molstar.org/viewer"> <video controls autoplay loop muted> <source src="https://modal-cdn.com/example-chai1-folding.mp4" type="video/mp4"> </video> </a>
+# <a href="https://molstar.org/viewer" aria-label="Open the Mol* viewer"> <video controls autoplay loop muted> <source src="https://modal-cdn.com/example-chai1-folding.mp4" type="video/mp4"> </video> </a>
 # </center>
 
 # ## Setup
@@ -27,6 +27,7 @@
 import hashlib
 import json
 from pathlib import Path
+from typing import Optional
 from uuid import uuid4
 
 import modal
@@ -35,7 +36,7 @@ here = Path(__file__).parent  # the directory of this file
 
 MINUTES = 60  # seconds
 
-app = modal.App(name="example-chai1-inference")
+app = modal.App(name="example-chai1")
 
 # ## Fold a protein from the command line
 
@@ -59,10 +60,10 @@ app = modal.App(name="example-chai1-inference")
 @app.local_entrypoint()
 def main(
     force_redownload: bool = False,
-    fasta_file: str = None,
-    inference_config_file: str = None,
-    output_dir: str = None,
-    run_id: str = None,
+    fasta_file: Optional[str] = None,
+    inference_config_file: Optional[str] = None,
+    output_dir: Optional[str] = None,
+    run_id: Optional[str] = None,
 ):
     print("🧬 checking inference dependencies")
     download_inference_dependencies.remote(force=force_redownload)
@@ -89,12 +90,8 @@ def main(
 
     print(f"🧬 saving results to disk locally in {output_dir}")
     for ii, (scores, cif) in enumerate(results):
-        (Path(output_dir) / f"{run_id}-scores.model_idx_{ii}.npz").write_bytes(
-            scores
-        )
-        (Path(output_dir) / f"{run_id}-preds.model_idx_{ii}.cif").write_text(
-            cif
-        )
+        (Path(output_dir) / f"{run_id}-scores.model_idx_{ii}.npz").write_bytes(scores)
+        (Path(output_dir) / f"{run_id}-preds.model_idx_{ii}.cif").write_text(cif)
 
 
 # ## Installing Chai-1 Python dependencies on Modal
@@ -107,8 +104,16 @@ def main(
 
 # Here, we do it with one line, using the `uv` package manager for extra speed.
 
-image = modal.Image.debian_slim(python_version="3.12").run_commands(
-    "uv pip install --system --compile-bytecode chai_lab==0.5.0 hf_transfer==0.1.8"
+image = (
+    modal.Image.debian_slim(python_version="3.12")
+    .uv_pip_install(
+        "chai_lab==0.5.0",
+        "hf_transfer==0.1.8",
+    )
+    .uv_pip_install(
+        "torch==2.7.1",
+        index_url="https://download.pytorch.org/whl/cu128",
+    )
 )
 
 # ## Storing Chai-1 model weights on Modal with Volumes
@@ -157,9 +162,7 @@ image = image.env(  # update the environment variables in the image to...
 # We attach a Volume to a Modal Function that runs Chai-1 and the inference code
 # saves the results to distributed storage, without any fuss or source code changes.
 
-chai_preds_volume = modal.Volume.from_name(
-    "chai1-preds", create_if_missing=True
-)
+chai_preds_volume = modal.Volume.from_name("chai1-preds", create_if_missing=True)
 preds_dir = Path("/preds")
 
 # ## Running Chai-1 on Modal

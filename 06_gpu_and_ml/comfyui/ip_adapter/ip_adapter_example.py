@@ -16,7 +16,7 @@ image = (  # build up a Modal Image to run ComfyUI, step by step
         "comfy --skip-prompt install --nvidia"
     )
     .run_commands(  # download the WAS Node Suite custom node pack
-        "comfy node install ComfyUI_IPAdapter_plus"
+        "comfy node install comfyui_ipadapter_plus"
     )
     .run_commands("apt install -y wget")
     .run_commands(  # the Unified Model Loader node requires these two models to be named a specific way, so we use wget instead of the usual comfy model download command
@@ -38,12 +38,12 @@ app = modal.App(name="example-ip-adapter", image=image)
 
 # Run ComfyUI as an interactive web server
 @app.function(
-    allow_concurrent_inputs=10,
-    concurrency_limit=1,
-    container_idle_timeout=30,
+    max_containers=1,
+    scaledown_window=30,
     timeout=1800,
     gpu="A10G",
 )
+@modal.concurrent(max_inputs=10)
 @modal.web_server(8000, startup_timeout=60)
 def ui():
     subprocess.Popen("comfy launch -- --listen 0.0.0.0 --port 8000", shell=True)

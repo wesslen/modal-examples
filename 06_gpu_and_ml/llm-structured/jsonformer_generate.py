@@ -1,5 +1,5 @@
 # ---
-# lambda-test: false
+# lambda-test: false  # deprecated
 # ---
 # # Structured output generation with Jsonformer
 #
@@ -32,9 +32,7 @@ def download_model():
     )
     model.save_pretrained(CACHE_PATH, safe_serialization=True)
 
-    tokenizer = AutoTokenizer.from_pretrained(
-        MODEL_ID, use_fast=True, use_cache=True
-    )
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID, use_fast=True, use_cache=True)
     tokenizer.save_pretrained(CACHE_PATH, safe_serialization=True)
 
 
@@ -50,7 +48,7 @@ image = (
     )
     .run_function(download_model)
 )
-app = modal.App("example-jsonformer")
+app = modal.App("example-jsonformer-generate")
 
 
 # ## Generate examples
@@ -58,7 +56,7 @@ app = modal.App("example-jsonformer")
 # The generate function takes two arguments `prompt` and `json_schema`, where
 # `prompt` is used to describe the domain of your data (for example, "plants")
 # and the schema contains the JSON schema you want to populate.
-@app.function(gpu=modal.gpu.A10G(), image=image)
+@app.function(gpu="A10G", image=image)
 def generate(prompt: str, json_schema: dict[str, Any]) -> dict[str, Any]:
     from jsonformer import Jsonformer
     from transformers import AutoModelForCausalLM, AutoTokenizer

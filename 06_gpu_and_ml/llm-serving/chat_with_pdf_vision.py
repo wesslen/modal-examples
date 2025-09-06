@@ -13,8 +13,8 @@
 
 # First, we’ll import the libraries we need locally and define some constants.
 
-import os
 from pathlib import Path
+from typing import Optional
 from urllib.request import urlopen
 from uuid import uuid4
 
@@ -22,22 +22,29 @@ import modal
 
 MINUTES = 60  # seconds
 
-# ## Setting up dependenices
+app = modal.App("example-chat-with-pdf-vision")
+
+# ## Setting up dependencies
 
 # In Modal, we define [container images](https://modal.com/docs/guide/custom-container) that run our serverless workloads.
 # We install the packages required for our application in those images.
+
+CACHE_DIR = "/hf-cache"
 
 model_image = (
     modal.Image.debian_slim(python_version="3.12")
     .apt_install("git")
     .pip_install(
         [
-            "git+https://github.com/illuin-tech/colpali.git@782edcd50108d1842d154730ad3ce72476a2d17d",  # we pin the commit id
+            "colpali-engine==0.3.5",
+            "transformers>=4.45.0",
+            "torch>=2.0.0",
             "hf_transfer==0.1.8",
             "qwen-vl-utils==0.0.8",
             "torchvision==0.19.1",
         ]
     )
+    .env({"HF_HUB_ENABLE_HF_TRANSFER": "1", "HF_HUB_CACHE": CACHE_DIR})
 )
 
 # These dependencies are only installed remotely, so we can't import them locally.
@@ -49,40 +56,13 @@ with model_image.imports():
     from qwen_vl_utils import process_vision_info
     from transformers import AutoProcessor, Qwen2VLForConditionalGeneration
 
-# ## Downloading ColQwen2
+# ## Specifying the ColQwen2 model
 
 # Vision-language models (VLMs) for embedding and generation add another layer of simplification
 # to RAG apps based on vector search: we only need one model.
-# Here, we use the Qwen2-VL-2B-Instruct model from Alibaba.
-# The function below downloads the model from the Hugging Face Hub.
 
-
-def download_model(model_dir, model_name, model_revision):
-    from huggingface_hub import snapshot_download
-    from transformers.utils import move_cache
-
-    os.makedirs(model_dir, exist_ok=True)
-    snapshot_download(
-        model_name,
-        local_dir=model_dir,
-        revision=model_revision,
-        ignore_patterns=["*.pt", "*.bin"],  # using safetensors
-    )
-    move_cache()
-
-
-# We can also include other files that our application needs in the container image.
-# Here, we add the model weights to the image by executing our `download_model` function.
-
-model_image = model_image.env({"HF_HUB_ENABLE_HF_TRANSFER": "1"}).run_function(
-    download_model,
-    timeout=20 * MINUTES,
-    kwargs={
-        "model_dir": "/model-qwen2-VL-2B-Instruct",
-        "model_name": "Qwen/Qwen2-VL-2B-Instruct",
-        "model_revision": "aca78372505e6cb469c4fa6a35c60265b00ff5a4",
-    },
-)
+MODEL_NAME = "Qwen/Qwen2-VL-2B-Instruct"
+MODEL_REVISION = "aca78372505e6cb469c4fa6a35c60265b00ff5a4"
 
 # ## Managing state with Modal Volumes and Dicts
 
@@ -110,7 +90,7 @@ model_image = model_image.env({"HF_HUB_ENABLE_HF_TRANSFER": "1"}).run_function(
 
 # A Dict can hold a few gigabytes across keys of size up to 100 MiB,
 # so it works well for our chat session state, which is a few KiB per session,
-# and for our embeddings, with are a few hundred KiB per PDF page,
+# and for our embeddings, which are a few hundred KiB per PDF page,
 # up to about 100,000 pages of PDFs.
 
 # At a larger scale, we'd need to replace this with a database, like Postgres,
@@ -140,6 +120,31 @@ class Session:
 pdf_volume = modal.Volume.from_name("colqwen-chat-pdfs", create_if_missing=True)
 PDF_ROOT = Path("/vol/pdfs/")
 
+# ### Caching the model weights
+
+# We'll also use a Volume to cache the model weights.
+
+cache_volume = modal.Volume.from_name("hf-hub-cache", create_if_missing=True)
+
+
+# Running this function will download the model weights to the cache volume.
+# Otherwise, the model weights will be downloaded on the first query. For more on storing model weights on Modal, see
+# [this guide](https://modal.com/docs/guide/model-weights).
+
+
+@app.function(
+    image=model_image, volumes={CACHE_DIR: cache_volume}, timeout=20 * MINUTES
+)
+def download_model():
+    from huggingface_hub import snapshot_download
+
+    result = snapshot_download(
+        MODEL_NAME,
+        revision=MODEL_REVISION,
+        ignore_patterns=["*.pt", "*.bin"],  # using safetensors
+    )
+    print(f"Downloaded model weights to {result}")
+
 
 # ## Defining a Chat with PDF service
 
@@ -148,25 +153,20 @@ PDF_ROOT = Path("/vol/pdfs/")
 
 # It uses [Modal `@app.cls`](https://modal.com/docs/guide/lifecycle-functions) decorators
 # to organize the "lifecycle" of the app:
-# to ensure all model files are downloaded (`@modal.build`)
-# to load the model on container start (`@modal.enter`)
-# and to run inference on request (`@modal.method`).
+# loading the model on container start (`@modal.enter`) and running inference on request (`@modal.method`).
 
 # We include in the arguments to the `@app.cls` decorator
 # all the information about this service's infrastructure:
 # the container image, the remote storage, and the GPU requirements.
 
-app = modal.App("chat-with-pdf")
-
 
 @app.cls(
     image=model_image,
-    gpu=modal.gpu.A100(size="80GB"),
-    container_idle_timeout=10 * MINUTES,  # spin down when inactive
-    volumes={"/vol/pdfs/": pdf_volume},
+    gpu="A100-80GB",
+    scaledown_window=10 * MINUTES,  # spin down when inactive
+    volumes={"/vol/pdfs/": pdf_volume, CACHE_DIR: cache_volume},
 )
 class Model:
-    @modal.build()
     @modal.enter()
     def load_models(self):
         self.colqwen2_model = ColQwen2.from_pretrained(
@@ -178,7 +178,9 @@ class Model:
             "vidore/colqwen2-v0.1"
         )
         self.qwen2_vl_model = Qwen2VLForConditionalGeneration.from_pretrained(
-            "Qwen/Qwen2-VL-2B-Instruct", torch_dtype=torch.bfloat16
+            MODEL_NAME,
+            revision=MODEL_REVISION,
+            torch_dtype=torch.bfloat16,
         )
         self.qwen2_vl_model.to("cuda:0")
         self.qwen2_vl_processor = AutoProcessor.from_pretrained(
@@ -210,16 +212,12 @@ class Model:
         # Generated embeddings from the image(s)
         BATCH_SZ = 4
         pdf_embeddings = []
-        batches = [
-            images[i : i + BATCH_SZ] for i in range(0, len(images), BATCH_SZ)
-        ]
+        batches = [images[i : i + BATCH_SZ] for i in range(0, len(images), BATCH_SZ)]
         for batch in batches:
             batch_images = self.colqwen2_processor.process_images(batch).to(
                 self.colqwen2_model.device
             )
-            pdf_embeddings += list(
-                self.colqwen2_model(**batch_images).to("cpu")
-            )
+            pdf_embeddings += list(self.colqwen2_model(**batch_images).to("cpu"))
 
         # Store the image embeddings in the session, for later retrieval
         session.pdf_embeddings = pdf_embeddings
@@ -294,9 +292,7 @@ class Model:
         )
         inputs = inputs.to("cuda:0")
 
-        generated_ids = self.qwen2_vl_model.generate(
-            **inputs, max_new_tokens=512
-        )
+        generated_ids = self.qwen2_vl_model.generate(**inputs, max_new_tokens=512)
         generated_ids_trimmed = [
             out_ids[len(in_ids) :]
             for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
@@ -312,7 +308,7 @@ class Model:
 # ## Loading PDFs as images
 
 # Vision-Language Models operate on images, not PDFs directly,
-# so we need to convert out PDFs into images first.
+# so we need to convert our PDFs into images first.
 
 # We separate this from our indexing and chatting logic --
 # we run on a different container with different dependencies.
@@ -320,7 +316,7 @@ class Model:
 pdf_image = (
     modal.Image.debian_slim(python_version="3.12")
     .apt_install("poppler-utils")
-    .pip_install("pdf2image==1.17.0")
+    .pip_install("pdf2image==1.17.0", "pillow==10.4.0")
 )
 
 
@@ -349,7 +345,11 @@ def convert_pdf_to_images(pdf_bytes):
 
 
 @app.local_entrypoint()
-def main(question: str = None, pdf_path: str = None, session_id: str = None):
+def main(
+    question: Optional[str] = None,
+    pdf_path: Optional[str] = None,
+    session_id: Optional[str] = None,
+):
     model = Model()
     if session_id is None:
         session_id = str(uuid4())
@@ -361,8 +361,7 @@ def main(question: str = None, pdf_path: str = None, session_id: str = None):
         if pdf_path.startswith("http"):
             pdf_bytes = urlopen(pdf_path).read()
         else:
-            pdf_path = Path(pdf_path)
-            pdf_bytes = pdf_path.read_bytes()
+            pdf_bytes = Path(pdf_path).read_bytes()
 
         print("Indexing PDF from", pdf_path)
         model.index_pdf.remote(session_id, pdf_bytes)
@@ -409,9 +408,9 @@ web_image = pdf_image.pip_install(
     # gradio requires sticky sessions
     # so we limit the number of concurrent containers to 1
     # and allow it to scale to 1000 concurrent inputs
-    concurrency_limit=1,
-    allow_concurrent_inputs=1000,
+    max_containers=1,
 )
+@modal.concurrent(max_inputs=1000)
 @modal.asgi_app()
 def ui():
     import uuid

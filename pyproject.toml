@@ -4,8 +4,7 @@ filterwarnings = [
     "error::modal.exception.DeprecationError",
     "ignore::DeprecationWarning:pytest.*:",
 ]
-pythonpath = ["06_gpu_and_ml/spam-detect", "06_gpu_and_ml/text-to-pokemon"]
-
+addopts = "--ignore 07_web_endpoints/webrtc/webrtc_yolo_test.py --ignore 06_gpu_and_ml/llm-serving/openai_compatible/load_test.py --ignore 07_web_endpoints/fasthtml-checkboxes/cbx_load_test.py"
 
 [tool.mypy]
 ignore_missing_imports = true
@@ -19,7 +18,7 @@ ignore_missing_imports = true
 
 [tool.ruff]
 exclude = [".venv", "venv", "__pycache__"]
-line-length = 80
+line-length = 88
 # TODO: Add when available: "E266", "E203"
 lint.ignore = ["E501", "E741", "E402"]
 lint.select = ['E', 'F', 'W', 'I']

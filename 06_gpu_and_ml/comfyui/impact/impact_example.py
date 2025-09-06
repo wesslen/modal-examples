@@ -16,7 +16,7 @@ image = (
         "comfy --skip-prompt install --nvidia"
     )
     .run_commands(  # download the Impact pack
-        "comfy node install ComfyUI-Impact-Pack"
+        "comfy node install comfyui-impact-pack"
     )
     .pip_install("ultralytics==8.3.26")  # object detection models
     .apt_install(  # opengl dependencies
@@ -32,12 +32,12 @@ app = modal.App(name="example-impact", image=image)
 
 # Run ComfyUI as an interactive web server
 @app.function(
-    allow_concurrent_inputs=10,
-    concurrency_limit=1,
-    container_idle_timeout=30,
+    max_containers=1,
+    scaledown_window=30,
     timeout=1800,
     gpu="A10G",
 )
+@modal.concurrent(max_inputs=10)
 @modal.web_server(8000, startup_timeout=60)
 def ui():
     subprocess.Popen("comfy launch -- --listen 0.0.0.0 --port 8000", shell=True)

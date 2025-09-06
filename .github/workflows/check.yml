@@ -9,10 +9,10 @@ on:
 jobs:
   ruff:
     name: Ruff
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
         with:
           fetch-depth: 1
       - uses: ./.github/actions/setup
@@ -23,10 +23,10 @@ jobs:
 
   nbconvert:
     name: NbConvert
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
         with:
           fetch-depth: 1
       - uses: ./.github/actions/setup
@@ -38,10 +38,10 @@ jobs:
 
   pytest:
     name: Pytest
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
         with:
           fetch-depth: 1
       - uses: ./.github/actions/setup

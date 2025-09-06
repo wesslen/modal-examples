@@ -10,7 +10,11 @@
 
 # The output should look something like this:
 
-# <video src="./segmented_video.mp4" width="600" height="400" controls></video>
+# <center>
+# <video controls autoplay loop muted>
+# <source src="https://modal-cdn.com/example-segmented-video.mp4" type="video/mp4">
+# </video>
+# </center>
 
 # ## Set up dependencies for SAM 2
 
@@ -25,7 +29,9 @@ from pathlib import Path
 import modal
 
 MODEL_TYPE = "facebook/sam2-hiera-large"
-SAM2_GIT_SHA = "c2ec8e14a185632b0a5d8b161928ceb50197eddc"  # pin commit! research code is fragile
+SAM2_GIT_SHA = (
+    "c2ec8e14a185632b0a5d8b161928ceb50197eddc"  # pin commit! research code is fragile
+)
 
 image = (
     modal.Image.debian_slim(python_version="3.10")
@@ -43,29 +49,31 @@ image = (
         f"git+https://github.com/facebookresearch/sam2.git@{SAM2_GIT_SHA}",
     )
 )
-app = modal.App("sam2-app", image=image)
+app = modal.App("example-segment-anything", image=image)
 
 
 # ## Wrapping the SAM 2 model in a Modal class
 
 # Next, we define the `Model` class that will handle SAM 2 operations for both image and video.
 
-# We use `@modal.build()` and `@modal.enter()` decorators here for optimization:
-# they prevent us from downloading or initializing the model on every call.
-
-# `@modal.build()` ensures this method runs during the container build process,
-# downloading the model only once and caching it in the container image.
-
-# `@modal.enter()` makes sure the method runs only once when a new container starts,
-# initializing the model and moving it to GPU.
+# We use the `@modal.enter()` decorators here for optimization: it makes sure the initialization
+# method runs only once, when a new container starts, instead of in the path of every call.
+# We'll also use a modal Volume to cache the model weights so that they don't need to be downloaded
+# repeatedly when we start new containers. For more on storing model weights on Modal, see
+# [this guide](https://modal.com/docs/guide/model-weights).
 
 
-volume = modal.Volume.from_name("sam2-inputs", create_if_missing=True)
+video_vol = modal.Volume.from_name("sam2-inputs", create_if_missing=True)
+cache_vol = modal.Volume.from_name("hf-hub-cache", create_if_missing=True)
+cache_dir = "/cache"
 
 
-@app.cls(gpu="A100", volumes={"/root/videos": volume})
+@app.cls(
+    image=image.env({"HF_HUB_CACHE": cache_dir}),
+    volumes={"/root/videos": video_vol, cache_dir: cache_vol},
+    gpu="A100",
+)
 class Model:
-    @modal.build()
     @modal.enter()
     def initialize_model(self):
         """Download and initialize model."""
@@ -74,9 +82,7 @@ class Model:
         self.video_predictor = SAM2VideoPredictor.from_pretrained(MODEL_TYPE)
 
     @modal.method()
-    def generate_video_masks(
-        self, video="/root/videos/input.mp4", point_coords=None
-    ):
+    def generate_video_masks(self, video="/root/videos/input.mp4", point_coords=None):
         """Generate masks for a video."""
         import ffmpeg
         import numpy as np
@@ -105,8 +111,9 @@ class Model:
         labels = np.array([1] * len(points), np.int32)
 
         # run the model on GPU
-        with torch.inference_mode(), torch.autocast(
-            "cuda", dtype=torch.bfloat16
+        with (
+            torch.inference_mode(),
+            torch.autocast("cuda", dtype=torch.bfloat16),
         ):
             self.inference_state = self.video_predictor.init_state(
                 video_path=str(frames_dir)
@@ -125,9 +132,7 @@ class Model:
                 labels=labels,
             )
 
-            print(
-                f"frame_idx: {frame_idx}, object_ids: {object_ids}, masks: {masks}"
-            )
+            print(f"frame_idx: {frame_idx}, object_ids: {object_ids}, masks: {masks}")
 
             # run propagation throughout the video and collect the results in a dict
             video_segments = {}  # video_segments contains the per-frame segmentation results
@@ -161,9 +166,7 @@ class Model:
             "scale",
             "trunc(iw/2)*2",
             "trunc(ih/2)*2",  # round to even dimensions to encode for "dumb players", https://trac.ffmpeg.org/wiki/Encode/H.264#Encodingfordumbplayers
-        ).output(
-            str(out_dir / "out.mp4"), format="mp4", pix_fmt="yuv420p"
-        ).run()
+        ).output(str(out_dir / "out.mp4"), format="mp4", pix_fmt="yuv420p").run()
 
         return (out_dir / "out.mp4").read_bytes()
 
@@ -188,7 +191,7 @@ def main(
     x_point=250,
     y_point=200,
 ):
-    with volume.batch_upload(force=True) as batch:
+    with video_vol.batch_upload(force=True) as batch:
         batch.put_file(input_video, "input.mp4")
 
     model = Model()
@@ -245,9 +248,7 @@ def show_mask(mask, ax, obj_id=None, random_color=False):
     ax.imshow(mask_image)
 
 
-def save_segmented_frames(
-    video_segments, frames_dir, out_dir, frame_names, stride=5
-):
+def save_segmented_frames(video_segments, frames_dir, out_dir, frame_names, stride=5):
     import io
 
     import matplotlib.pyplot as plt
@@ -261,9 +262,7 @@ def save_segmented_frames(
         frame = Image.open(frames_dir / frame_names[out_frame_idx])
         width, height = frame.size
         width, height = width - width % 2, height - height % 2
-        fig, ax = plt.subplots(
-            figsize=(width * inches_per_px, height * inches_per_px)
-        )
+        fig, ax = plt.subplots(figsize=(width * inches_per_px, height * inches_per_px))
         ax.axis("off")
         ax.imshow(frame)
 

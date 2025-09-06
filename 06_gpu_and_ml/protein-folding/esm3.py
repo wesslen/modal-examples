@@ -8,7 +8,7 @@
 # know the three-dimensional structure of a few hundred thousand,
 # gathered by slow, difficult observational methods like X-ray crystallography.
 # Built upon this data are machine learning models like
-# Evolutionary Scale's [ESM3](https://github.com/facebookresearch/esm)
+# EvolutionaryScale's [ESM3](https://www.evolutionaryscale.ai/blog/esm3-release)
 # that can predict the structure of any sequence in seconds.
 
 # In this example, we'll show how you can use Modal to not
@@ -20,12 +20,13 @@
 import base64
 import io
 from pathlib import Path
+from typing import Optional
 
 import modal
 
 MINUTES = 60  # seconds
 
-app = modal.App("example-esm3-dashboard")
+app = modal.App("example-esm3")
 
 # ### Create a Volume to store ESM3 model weights and Entrez sequence data
 
@@ -35,9 +36,7 @@ app = modal.App("example-esm3-dashboard")
 # [this guide](https://modal.com/docs/guide/model-weights).
 # We'll use this same distributed storage primitive to store sequence data.
 
-volume = modal.Volume.from_name(
-    "example-esm3-dashboard", create_if_missing=True
-)
+volume = modal.Volume.from_name("example-esm3", create_if_missing=True)
 VOLUME_PATH = Path("/vol")
 MODELS_PATH = VOLUME_PATH / "models"
 DATA_PATH = VOLUME_PATH / "data"
@@ -73,8 +72,10 @@ esm3_image = (
 # [this guide](https://modal.com/docs/guide/images).
 
 
-web_app_image = modal.Image.debian_slim(python_version="3.11").pip_install(
-    "gradio~=4.44.0", "biotite==0.41.2", "fastapi[standard]==0.115.4"
+web_app_image = (
+    modal.Image.debian_slim(python_version="3.11")
+    .pip_install("gradio~=4.44.0", "biotite==0.41.2", "fastapi[standard]==0.115.4")
+    .add_local_dir(Path(__file__).parent / "frontend", remote_path="/assets")
 )
 
 
@@ -216,16 +217,13 @@ def run_esm(sequence: str) -> str:
 # You should see the URL for this UI in the output of `modal deploy`
 # or on your [Modal app dashboard](https://modal.com/apps) for this app.
 
-assets_path = Path(__file__).parent / "frontend"
-
 
 @app.function(
     image=web_app_image,
-    concurrency_limit=1,  # Gradio requires sticky sessions
-    allow_concurrent_inputs=1000,  # but can handle many async inputs
     volumes={VOLUME_PATH: volume},
-    mounts=[modal.Mount.from_local_dir(assets_path, remote_path="/assets")],
+    max_containers=1,  # Gradio requires sticky sessions
 )
+@modal.concurrent(max_inputs=1000)  # Gradio can handle many async inputs
 @modal.asgi_app()
 def ui():
     import gradio as gr
@@ -251,9 +249,7 @@ def ui():
 
     title = "Predict & Visualize Protein Structures"
 
-    with gr.Blocks(
-        theme=theme, css=css, title=title, js=always_dark()
-    ) as interface:
+    with gr.Blocks(theme=theme, css=css, title=title, js=always_dark()) as interface:
         gr.Markdown(f"# {title}")
 
         with gr.Row():
@@ -267,9 +263,7 @@ def ui():
                     "Retrieve Sequence from UniProt ID", variant="primary"
                 )
 
-                uniprot_link_button = gr.Button(
-                    value="View protein on UniProt website"
-                )
+                uniprot_link_button = gr.Button(value="View protein on UniProt website")
                 uniprot_link_button.click(
                     fn=None,
                     inputs=uniprot_num_box,
@@ -287,9 +281,7 @@ def ui():
                 with gr.Row():
                     half_len = int(len(example_uniprots) / 2)
                     with gr.Column():
-                        for i, uniprot in enumerate(
-                            example_uniprots[:half_len]
-                        ):
+                        for i, uniprot in enumerate(example_uniprots[:half_len]):
                             btn = gr.Button(uniprot, variant="secondary")
                             btn.click(
                                 fn=lambda j=i: extract_uniprot_num(j),
@@ -297,14 +289,10 @@ def ui():
                             )
 
                     with gr.Column():
-                        for i, uniprot in enumerate(
-                            example_uniprots[half_len:]
-                        ):
+                        for i, uniprot in enumerate(example_uniprots[half_len:]):
                             btn = gr.Button(uniprot, variant="secondary")
                             btn.click(
-                                fn=lambda j=i + half_len: extract_uniprot_num(
-                                    j
-                                ),
+                                fn=lambda j=i + half_len: extract_uniprot_num(j),
                                 outputs=uniprot_num_box,
                             )
 
@@ -322,9 +310,7 @@ def ui():
         gr.Markdown("## ESM3 Predicted Structure")
         molstar_html = gr.HTML()
 
-        run_esm_button.click(
-            fn=run_esm, inputs=sequence_box, outputs=molstar_html
-        )
+        run_esm_button.click(fn=run_esm, inputs=sequence_box, outputs=molstar_html)
 
     # return a FastAPI app for Modal to serve
     return mount_gradio_app(app=web_app, blocks=interface, path="/")
@@ -345,16 +331,10 @@ def ui():
 
 
 @app.local_entrypoint()
-def main(
-    sequence: str = None,
-    output_dir: str = None,
-):
+def main(sequence: Optional[str] = None, output_dir: Optional[str] = None):
     if sequence is None:
         print("using sequence for insulin [P01308]")
-        sequence = (
-            "MRTPMLLALLALATLCLAGRADAKPGDAESGKGAAFVSKQEGSEVVKRLRR"
-            "YLDHWLGAPAPYPDPLEPKREVCELNPDCDELADHIGFQEAYRRFYGPV"
-        )
+        sequence = "MRTPMLLALLALATLCLAGRADAKPGDAESGKGAAFVSKQEGSEVVKRLRRYLDHWLGAPAPYPDPLEPKREVCELNPDCDELADHIGFQEAYRRFYGPV"
 
     if output_dir is None:
         output_dir = Path("/tmp/esm3")

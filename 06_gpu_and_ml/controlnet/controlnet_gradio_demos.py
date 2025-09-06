@@ -10,7 +10,7 @@
 # including a depth maps, segmentation maps, scribble drawings, and keypoints!
 
 # <center>
-# <video controls>
+# <video controls autoplay loop muted>
 # <source src="https://user-images.githubusercontent.com/12058921/222927911-3ab52dd1-f2ee-4fb8-97e8-dafbf96ed5c5.mp4" type="video/mp4">
 # </video>
 # </center>
@@ -243,7 +243,7 @@ image = (
         secrets=[modal.Secret.from_dict({"DEMO_NAME": DEMO_NAME})],
     )
 )
-app = modal.App(name="example-controlnet", image=image)
+app = modal.App(name="example-controlnet-gradio-demos", image=image)
 
 web_app = FastAPI()
 
@@ -277,20 +277,20 @@ def import_gradio_app_blocks(demo: DemoApp):
 
 
 # Because the ControlNet gradio apps are so time and compute intensive to cold-start,
-# the web app function is limited to running just 1 warm container (concurrency_limit=1).
+# the web app function is limited to running just 1 warm container (max_containers=1).
 # This way, while playing with the demos we can pay the cold-start cost once and have
 # all web requests hit the same warm container.
 # Spinning up extra containers to handle additional requests would not be efficient
 # given the cold-start time.
-# We set the container_idle_timeout to 600 seconds so the container will be kept
+# We set the scaledown_window to 600 seconds so the container will be kept
 # running for 10 minutes after the last request, to keep the app responsive in case
 # of continued experimentation.
 
 
 @app.function(
     gpu="A10G",
-    concurrency_limit=1,
-    container_idle_timeout=600,
+    max_containers=1,
+    scaledown_window=600,
 )
 @modal.asgi_app()
 def run():

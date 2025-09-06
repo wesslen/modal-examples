@@ -2,7 +2,7 @@
 # deploy: true
 # ---
 
-# # Create a character LoRA for Flux with Hugging Face and Gradio
+# # Fine-tune Flux on your pet using LoRA
 
 # This example finetunes the [Flux.1-dev model](https://huggingface.co/black-forest-labs/FLUX.1-dev)
 # on images of a pet (by default, a puppy named Qwerty)
@@ -48,7 +48,7 @@ import modal
 # Note that these dependencies are not installed locally
 # -- they are only installed in the remote environment where our Modal App runs.
 
-app = modal.App(name="example-dreambooth-flux")
+app = modal.App(name="example-diffusers-lora-finetune")
 
 image = modal.Image.debian_slim(python_version="3.10").pip_install(
     "accelerate==0.31.0",
@@ -78,9 +78,7 @@ image = modal.Image.debian_slim(python_version="3.10").pip_install(
 # The container environments Modal Functions run in are highly flexible --
 # see [the docs](https://modal.com/docs/guide/custom-container) for more details.
 
-GIT_SHA = (
-    "e649678bf55aeaa4b60bd1f68b1ee726278c0304"  # specify the commit to fetch
-)
+GIT_SHA = "e649678bf55aeaa4b60bd1f68b1ee726278c0304"  # specify the commit to fetch
 
 image = (
     image.apt_install("git")
@@ -121,7 +119,8 @@ class SharedConfig:
 # A persisted [`modal.Volume`](https://modal.com/docs/guide/volumes) can store and share data across Modal Apps and Functions.
 
 # We'll use one to store both the original and fine-tuned weights we create during training
-# and then load them back in for inference.
+# and then load them back in for inference. For more on storing model weights on Modal, see
+# [this guide](https://modal.com/docs/guide/model-weights).
 
 volume = modal.Volume.from_name(
     "dreambooth-finetuning-volume-flux", create_if_missing=True
@@ -265,18 +264,12 @@ class TrainConfig(SharedConfig):
 
 @app.function(
     image=image,
-    gpu=modal.gpu.A100(  # fine-tuning is VRAM-heavy and requires a high-VRAM GPU
-        count=1, size="80GB"
-    ),
+    gpu="A100-80GB",  # fine-tuning is VRAM-heavy and requires a high-VRAM GPU
     volumes={MODEL_DIR: volume},  # stores fine-tuned model
     timeout=1800,  # 30 minutes
     secrets=[huggingface_secret]
     + (
-        [
-            modal.Secret.from_name(
-                "wandb-secret", required_keys=["WANDB_API_KEY"]
-            )
-        ]
+        [modal.Secret.from_name("wandb-secret", required_keys=["WANDB_API_KEY"])]
         if USE_WANDB
         else []
     ),
@@ -430,9 +423,9 @@ web_image = image.add_local_dir(
 
 @app.function(
     image=web_image,
-    concurrency_limit=1,
-    allow_concurrent_inputs=1000,
+    max_containers=1,
 )
+@modal.concurrent(max_inputs=1000)
 @modal.asgi_app()
 def fastapi_app():
     import gradio as gr
@@ -533,14 +526,14 @@ def fastapi_app():
 
 # You can use the `modal` command-line interface to set up, customize, and deploy this app:
 
-# - `modal run dreambooth_app.py` will train the model. Change the `instance_example_urls_file` to point to your own pet's images.
-# - `modal serve dreambooth_app.py` will [serve](https://modal.com/docs/guide/webhooks#developing-with-modal-serve) the Gradio interface at a temporary location. Great for iterating on code!
-# - `modal shell dreambooth_app.py` is a convenient helper to open a bash [shell](https://modal.com/docs/guide/developing-debugging#interactive-shell) in our image. Great for debugging environment issues.
+# - `modal run diffusers_lora_finetune.py` will train the model. Change the `instance_example_urls_file` to point to your own pet's images.
+# - `modal serve diffusers_lora_finetune.py` will [serve](https://modal.com/docs/guide/webhooks#developing-with-modal-serve) the Gradio interface at a temporary location. Great for iterating on code!
+# - `modal shell diffusers_lora_finetune.py` is a convenient helper to open a bash [shell](https://modal.com/docs/guide/developing-debugging#interactive-shell) in our image. Great for debugging environment issues.
 
 # Remember, once you've trained your own fine-tuned model, you can deploy it permanently -- for no cost when it is not being used! --
-# using `modal deploy dreambooth_app.py`.
+# using `modal deploy diffusers_lora_finetune.py`.
 
-# If you just want to try the app out, you can find our deployment [here](https://modal-labs--example-dreambooth-flux-fastapi-app.modal.run).
+# If you just want to try the app out, you can find our deployment [here](https://modal-labs--example-diffusers-lora-finetune-fastapi-app.modal.run).
 
 
 @app.local_entrypoint()

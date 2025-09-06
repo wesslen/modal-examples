@@ -1,5 +1,5 @@
 # ---
-# lambda-test: false
+# cmd: ["modal", "serve", "07_web_endpoints/flask_streaming.py"]
 # ---
 
 # # Deploy Flask app with streaming results with Modal
@@ -9,7 +9,7 @@
 import modal
 
 app = modal.App(
-    "example-web-flask-stream",
+    "example-flask-streaming",
     image=modal.Image.debian_slim().pip_install("flask"),
 )
 

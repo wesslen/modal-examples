@@ -14,7 +14,7 @@ from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 
 image = modal.Image.debian_slim().pip_install("fastapi[standard]")
-app = modal.App("example-fastapi-streaming", image=image)
+app = modal.App("example-streaming", image=image)
 
 web_app = FastAPI()
 
@@ -38,9 +38,7 @@ async def fake_video_streamer():
 
 @web_app.get("/")
 async def main():
-    return StreamingResponse(
-        fake_video_streamer(), media_type="text/event-stream"
-    )
+    return StreamingResponse(fake_video_streamer(), media_type="text/event-stream")
 
 
 @app.function()
@@ -61,7 +59,7 @@ def sync_fake_video_streamer():
 
 
 @app.function()
-@modal.web_endpoint()
+@modal.fastapi_endpoint()
 def hook():
     return StreamingResponse(
         sync_fake_video_streamer.remote_gen(), media_type="text/event-stream"
@@ -79,11 +77,9 @@ def map_me(i):
 
 
 @app.function()
-@modal.web_endpoint()
+@modal.fastapi_endpoint()
 def mapped():
-    return StreamingResponse(
-        map_me.map(range(10)), media_type="text/event-stream"
-    )
+    return StreamingResponse(map_me.map(range(10)), media_type="text/event-stream")
 
 
 # To try for yourself, run

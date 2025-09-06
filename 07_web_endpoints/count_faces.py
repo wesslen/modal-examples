@@ -38,9 +38,7 @@ def count_faces(image_bytes: bytes) -> int:
     # Example borrowed from https://towardsdatascience.com/face-detection-in-2-minutes-using-opencv-python-90f89d7c0f81
     # Load the cascade
     face_cascade = cv2.CascadeClassifier(
-        os.path.join(
-            cv2.data.haarcascades, "haarcascade_frontalface_default.xml"
-        )
+        os.path.join(cv2.data.haarcascades, "haarcascade_frontalface_default.xml")
     )
     # Read the input image
     np_bytes = np.frombuffer(image_bytes, dtype=np.uint8)
@@ -97,7 +95,7 @@ def web():
                     <title>Face Counter Result</title>
                 </head>
                 <body>
-                    <h1>{inflect.engine().number_to_words(num_faces).title()} {'Face' if num_faces==1 else 'Faces'} Detected</h1>
+                    <h1>{inflect.engine().number_to_words(num_faces).title()} {"Face" if num_faces == 1 else "Faces"} Detected</h1>
                     <h2>{"😀" * num_faces}</h2>
                     <a href="/">Go back</a>
                 </body>

@@ -9,19 +9,18 @@
 # without having to worry about setting up servers or managing infrastructure.
 
 # This tutorial shows the path with the shortest ["time to 200"](https://shkspr.mobi/blog/2021/05/whats-your-apis-time-to-200/):
-# [`modal.web_endpoint`](https://modal.com/docs/reference/modal.web_endpoint).
+# [`modal.fastapi_endpoint`](https://modal.com/docs/reference/modal.fastapi_endpoint).
 
 # On Modal, web endpoints have all the superpowers of Modal Functions:
 # they can be [accelerated with GPUs](https://modal.com/docs/guide/gpu),
 # they can access [Secrets](https://modal.com/docs/guide/secrets) or [Volumes](https://modal.com/docs/guide/volumes),
 # and they [automatically scale](https://modal.com/docs/guide/cold-start) to handle more traffic.
 
-
 # Under the hood, we use the [FastAPI library](https://fastapi.tiangolo.com/),
 # which has [high-quality documentation](https://fastapi.tiangolo.com/tutorial/),
 # linked throughout this tutorial.
 
-# ## Turn a Modal Function into an endpoint with a single decorator
+# ## Turn a Modal Function into an API endpoint with a single decorator
 
 # Modal Functions are already accessible remotely -- when you add the `@app.function` decorator to a Python function
 # and run `modal deploy`, you make it possible for your [other Python functions to call it](https://modal.com/docs/guide/trigger-deployed-functions).
@@ -31,17 +30,17 @@
 
 # And that's where most of the power of the Internet comes from: sharing information and functionality across different computer systems.
 
-# So we provide the `web_endpoint` decorator to wrap your Modal Functions in the lingua franca of the web: HTTP.
+# So we provide the `fastapi_endpoint` decorator to wrap your Modal Functions in the lingua franca of the web: HTTP.
 # Here's what that looks like:
 
 import modal
 
 image = modal.Image.debian_slim().pip_install("fastapi[standard]")
-app = modal.App(name="example-lifecycle-web", image=image)
+app = modal.App(name="example-basic-web", image=image)
 
 
 @app.function()
-@modal.web_endpoint(
+@modal.fastapi_endpoint(
     docs=True  # adds interactive documentation in the browser
 )
 def hello():
@@ -83,7 +82,7 @@ def hello():
 
 
 @app.function()
-@modal.web_endpoint(docs=True)
+@modal.fastapi_endpoint(docs=True)
 def greet(user: str) -> str:
     return f"Hello {user}!"
 
@@ -99,7 +98,7 @@ def greet(user: str) -> str:
 
 
 # ### Sending data in the request body
-#
+
 # For larger and more complex data, it is generally preferrable to send data in the body of the HTTP request.
 # This body is formatted as [JSON](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON),
 # the most common data interchange format on the web.
@@ -109,7 +108,7 @@ def greet(user: str) -> str:
 
 
 @app.function()
-@modal.web_endpoint(method="POST", docs=True)
+@modal.fastapi_endpoint(method="POST", docs=True)
 def goodbye(data: dict) -> str:
     name = data.get("name") or "world"
     return f"Goodbye {name}!"
@@ -139,8 +138,8 @@ def goodbye(data: dict) -> str:
 # If that step is expensive, like [loading a large ML model](https://modal.com/docs/guide/model-weights),
 # it'd be a shame to have to do it every time a request comes in!
 
-# Web endpoints can be methods on a [`modal.Cls`](https://modal.com/docs/guide/lifecycle-functions#container-lifecycle-functions-and-parameters).
-# Note that they don't need the [`modal.method`](https://modal.com/docs/reference/modal.method) decorator.
+# Web endpoints can be methods on a [`modal.Cls`](https://modal.com/docs/guide/lifecycle-functions#container-lifecycle-functions-and-parameters),
+# which allows you to manage the container's lifecycle independently from processing individual requests.
 
 # This example will only set the `start_time` instance variable once, on container startup.
 
@@ -154,7 +153,7 @@ class WebApp:
         print("🏁 Starting up!")
         self.start_time = datetime.now(timezone.utc)
 
-    @modal.web_endpoint(docs=True)
+    @modal.fastapi_endpoint(docs=True)
     def web(self):
         from datetime import datetime, timezone
 
@@ -162,9 +161,52 @@ class WebApp:
         return {"start_time": self.start_time, "current_time": current_time}
 
 
+# ## Protect web endpoints with proxy authentication
+
+# Sharing your Python functions on the web is great, but it's not always a good idea
+# to make those functions available to just anyone.
+
+# For example, you might have a function like the one below that
+# is more expensive to run than to call (and so might be abused by your enemies)
+# or reveals information that you would rather keep secret.
+
+# To protect your Modal web endpoints so that they can't be triggered except
+# by members of your [Modal workspace](https://modal.com/docs/guide/workspaces),
+# add the `requires_proxy_auth=True` flag to the `fastapi_endpoint` decorator.
+
+
+@app.function(gpu="h100")
+@modal.fastapi_endpoint(requires_proxy_auth=True, docs=False)
+def expensive_secret():
+    return "I didn't care for 'The Godfather'. It insists upon itself."
+
+
+# The `expensive-secret` endpoint URL will still be printed to the output when you `modal serve` or `modal deploy`,
+# along with a "🔑" emoji indicating that it is secured with proxy authentication.
+# If you head to that URL via the browser, you will get a
+# [`401 Unauthorized`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401) error code in response.
+# You should also check the dashboard page for this app (at the URL printed at the very top of the `modal` command output)
+# so you can see that no containers were spun up to handle the request -- this authorization is handled entirely inside Modal's infrastructure.
+
+# You can trigger the web endpoint by [creating a Proxy Auth Token](https://modal.com/settings/proxy-auth-tokens)
+# and then including the token ID and secret in the `Modal-Key` and `Modal-Secret` headers.
+
+# From the command line, that might look like
+
+# ```shell
+# export TOKEN_ID=wk-1234abcd
+# export TOKEN_SECRET=ws-1234abcd
+# curl -H "Modal-Key: $TOKEN_ID" \
+#      -H "Modal-Secret: $TOKEN_SECRET" \
+#      https://your-workspace-name--expensive-secret.modal.run
+# ```
+
+# For more details, see the
+# [guide to proxy authentication](https://modal.com/docs/guide/webhook-proxy-auth).
+
 # ## What next?
 
-# Modal's `web_endpoint` decorator is opinionated and designed for relatively simple web applications --
+# Modal's `fastapi_endpoint` decorator is opinionated and designed for relatively simple web applications --
 # one or a few independent Python functions that you want to expose to the web.
 
 # Three additional decorators allow you to serve more complex web applications with greater control:

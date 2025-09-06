@@ -1,6 +1,5 @@
 # ---
-# deploy: true
-# lambda-test: false
+# lambda-test: false  # long-running
 # ---
 #
 # This scripts demonstrates how to ingest the famous ImageNet (https://www.image-net.org/)
@@ -31,11 +30,9 @@ volume = modal.CloudBucketMount(
     bucket_name,
     secret=bucket_creds,
 )
-image = (
-    modal.Image.debian_slim().apt_install("tree").pip_install("kaggle", "tqdm")
-)
+image = modal.Image.debian_slim().apt_install("tree").pip_install("kaggle", "tqdm")
 app = modal.App(
-    "example-imagenet-dataset-import",
+    "example-imagenet",
     image=image,
     secrets=[modal.Secret.from_name("kaggle-api-token")],
 )
@@ -50,14 +47,12 @@ def start_monitoring_disk_space(interval: int = 30) -> None:
             statvfs = os.statvfs("/")
             free_space = statvfs.f_frsize * statvfs.f_bavail
             print(
-                f"{task_id} free disk space: {free_space / (1024 ** 3):.2f} GB",
+                f"{task_id} free disk space: {free_space / (1024**3):.2f} GB",
                 file=sys.stderr,
             )
             time.sleep(interval)
 
-    monitoring_thread = threading.Thread(
-        target=log_disk_space, args=(interval,)
-    )
+    monitoring_thread = threading.Thread(target=log_disk_space, args=(interval,))
     monitoring_thread.daemon = True
     monitoring_thread.start()
 
@@ -94,9 +89,7 @@ def copy_concurrent(src: pathlib.Path, dest: pathlib.Path) -> None:
             self.pool.join()
 
     with MultithreadedCopier(max_threads=24) as copier:
-        shutil.copytree(
-            src, dest, copy_function=copier.copy, dirs_exist_ok=True
-        )
+        shutil.copytree(src, dest, copy_function=copier.copy, dirs_exist_ok=True)
 
 
 def extractall(fzip, dest, desc="Extracting"):
@@ -104,13 +97,16 @@ def extractall(fzip, dest, desc="Extracting"):
     from tqdm.utils import CallbackIOWrapper
 
     dest = pathlib.Path(dest).expanduser()
-    with zipfile.ZipFile(fzip) as zipf, tqdm(
-        desc=desc,
-        unit="B",
-        unit_scale=True,
-        unit_divisor=1024,
-        total=sum(getattr(i, "file_size", 0) for i in zipf.infolist()),
-    ) as pbar:
+    with (
+        zipfile.ZipFile(fzip) as zipf,
+        tqdm(
+            desc=desc,
+            unit="B",
+            unit_scale=True,
+            unit_divisor=1024,
+            total=sum(getattr(i, "file_size", 0) for i in zipf.infolist()),
+        ) as pbar,
+    ):
         for i in zipf.infolist():
             if not getattr(i, "file_size", 0):  # directory
                 zipf.extract(i, os.fspath(dest))
@@ -159,9 +155,7 @@ def import_transform_load() -> None:
     print(f"Extracting .zip into {extracted_dataset_path}...")
     extractall(dataset_path, extracted_dataset_path)
     print(f"Extracted {dataset_path} to {extracted_dataset_path}")
-    subprocess.run(
-        f"tree -L 3 {extracted_dataset_path}", shell=True, check=True
-    )
+    subprocess.run(f"tree -L 3 {extracted_dataset_path}", shell=True, check=True)
 
     final_dataset_path = vol_path / "extracted"
     final_dataset_path.mkdir(exist_ok=True)

@@ -16,7 +16,7 @@
 
 # By the end of this example, we've deployed a "playground" app where anyone with a browser can try
 # out these custom models. That's the power of Modal: custom, autoscaling AI applications, deployed in seconds.
-# You can try out our deployment [here](https://modal-labs-examples--loras-galore-ui.modal.run).
+# You can try out our deployment [here](https://modal-labs-examples--example-cloud-bucket-mount-loras-ui.modal.run).
 
 # ## Basic setup
 
@@ -43,17 +43,24 @@ bucket_secret = modal.Secret.from_name(
 MOUNT_PATH: Path = Path("/mnt/bucket")
 LORAS_PATH: Path = MOUNT_PATH / "loras/v5"
 
+BASE_MODEL = "stabilityai/stable-diffusion-xl-base-1.0"
+CACHE_DIR = "/hf-cache"
+
 # Modal runs serverless functions inside containers.
 # The environments those functions run in are defined by
 # the container `Image`. The line below constructs an image
 # with the dependencies we need -- no need to install them locally.
 
-image = modal.Image.debian_slim(python_version="3.12").pip_install(
-    "huggingface_hub==0.21.4",
-    "transformers==4.38.2",
-    "diffusers==0.26.3",
-    "peft==0.9.0",
-    "accelerate==0.27.2",
+image = (
+    modal.Image.debian_slim(python_version="3.12")
+    .pip_install(
+        "huggingface_hub==0.21.4",
+        "transformers==4.38.2",
+        "diffusers==0.26.3",
+        "peft==0.9.0",
+        "accelerate==0.27.2",
+    )
+    .env({"HF_HUB_CACHE": CACHE_DIR})
 )
 
 with image.imports():
@@ -67,7 +74,7 @@ with image.imports():
 # (almost) as if it were a local directory.
 
 app = modal.App(
-    "loras-galore",
+    "example-cloud-bucket-mount-loras",
     image=image,
     volumes={
         MOUNT_PATH: modal.CloudBucketMount(
@@ -76,6 +83,16 @@ app = modal.App(
         )
     },
 )
+
+
+# For the base model, we'll use a modal.Volume to store the Hugging Face cache.
+cache_volume = modal.Volume.from_name("hf-hub-cache", create_if_missing=True)
+
+
+@app.function(image=image, volumes={CACHE_DIR: cache_volume})
+def download_model():
+    loc = huggingface_hub.snapshot_download(repo_id=BASE_MODEL)
+    print(f"Saved model to {loc}")
 
 
 # ## Acquiring LoRA weights
@@ -91,7 +108,7 @@ def search_loras(limit: int, max_model_size: int = 1024 * 1024 * 1024):
 
     model_ids: list[str] = []
     for model in api.list_models(
-        tags=["lora", "base_model:stabilityai/stable-diffusion-xl-base-1.0"],
+        tags=["lora", f"base_model:{BASE_MODEL}"],
         library="diffusers",
         sort="downloads",  # sort by most downloaded
     ):
@@ -157,23 +174,18 @@ def download_lora(repository_id: str) -> Optional[str]:
 # We load Stable Diffusion XL 1.0 as a base model, then, when doing inference,
 # we load whichever LoRA the user specifies from the S3 bucket.
 # For more on the decorators we use on the methods below to speed up building and booting,
-# check out the [container lifecycle hooks guide](https://modal.com/docs/guide/lifecycle-hooks).
+# check out the [container lifecycle hooks guide](https://modal.com/docs/guide/lifecycle-functions).
 
 
-@app.cls(gpu="a10g")  # A10G GPUs are great for inference
+@app.cls(
+    gpu="a10g",  # A10G GPUs are great for inference
+    volumes={CACHE_DIR: cache_volume},  # We cache the base model
+)
 class StableDiffusionLoRA:
-    pipe_id = "stabilityai/stable-diffusion-xl-base-1.0"
-
-    @modal.build()  # when we setup our image, we download the base model
-    def build(self):
-        diffusers.DiffusionPipeline.from_pretrained(
-            self.pipe_id, torch_dtype=torch.float16
-        )
-
     @modal.enter()  # when a new container starts, we load the base model into the GPU
     def load(self):
         self.pipe = diffusers.DiffusionPipeline.from_pretrained(
-            self.pipe_id, torch_dtype=torch.float16
+            BASE_MODEL, torch_dtype=torch.float16
         ).to("cuda")
 
     @modal.method()  # at inference time, we pull in the LoRA weights and pass the final model the prompt
@@ -257,14 +269,14 @@ web_image = modal.Image.debian_slim(python_version="3.12").pip_install(
 
 @app.function(
     image=web_image,
-    keep_warm=1,
-    container_idle_timeout=60 * 20,
+    min_containers=1,
+    scaledown_window=60 * 20,
     # gradio requires sticky sessions
     # so we limit the number of concurrent containers to 1
     # and allow it to scale to 100 concurrent inputs
-    allow_concurrent_inputs=100,
-    concurrency_limit=1,
+    max_containers=1,
 )
+@modal.concurrent(max_inputs=100)
 @modal.asgi_app()
 def ui():
     """A simple Gradio interface around our LoRA inference."""
@@ -277,8 +289,7 @@ def ui():
 
     # determine which loras are available
     lora_ids = [
-        f"{lora_dir.parent.stem}/{lora_dir.stem}"
-        for lora_dir in LORAS_PATH.glob("*/*")
+        f"{lora_dir.parent.stem}/{lora_dir.stem}" for lora_dir in LORAS_PATH.glob("*/*")
     ]
 
     # pick one to be default, set a default prompt
@@ -306,9 +317,7 @@ def ui():
     iface = gr.Interface(
         go,
         inputs=[  # the inputs to go/our inference function
-            gr.Dropdown(
-                choices=lora_ids, value=default_lora_id, label="👉 LoRA ID"
-            ),
+            gr.Dropdown(choices=lora_ids, value=default_lora_id, label="👉 LoRA ID"),
             gr.Textbox(default_prompt, label="🎨 Prompt"),
             gr.Number(value=8888, label="🎲 Random Seed"),
         ],

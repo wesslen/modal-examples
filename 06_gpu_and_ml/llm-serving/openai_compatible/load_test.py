@@ -1,36 +1,40 @@
 import os
-from datetime import datetime
-from pathlib import Path
+from datetime import datetime, timezone
+from pathlib import Path, PosixPath
 
 import modal
 
 if modal.is_local():
     workspace = modal.config._profile
+    environment = modal.config.config.get("environment") or ""
 else:
     workspace = os.environ["MODAL_WORKSPACE"]
+    environment = os.environ["MODAL_ENVIRONMENT"]
 
 
 image = (
     modal.Image.debian_slim(python_version="3.11")
-    .pip_install("locust~=2.29.1", "openai~=1.37.1")
-    .env({"MODAL_WORKSPACE": workspace})
+    .pip_install("locust~=2.36.2", "openai~=1.37.1")
+    .env({"MODAL_WORKSPACE": workspace, "MODAL_ENVIRONMENT": environment})
     .add_local_file(
         Path(__file__).parent / "locustfile.py",
         remote_path="/root/locustfile.py",
     )
 )
-volume = modal.Volume.from_name(
-    "loadtest-vllm-oai-results", create_if_missing=True
-)
+
+volume = modal.Volume.from_name("loadtest-vllm-oai-results", create_if_missing=True)
 remote_path = Path("/root") / "loadtests"
 OUT_DIRECTORY = (
-    remote_path / datetime.utcnow().replace(microsecond=0).isoformat()
+    remote_path / datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 )
 
 app = modal.App("loadtest-vllm-oai", image=image, volumes={remote_path: volume})
 
 workers = 8
-host = f"https://{workspace}--example-vllm-openai-compatible-serve.modal.run"
+
+prefix = workspace + (f"-{environment}" if environment else "")
+host = f"https://{prefix}--example-vllm-inference-serve.modal.run"
+
 csv_file = OUT_DIRECTORY / "stats.csv"
 default_args = [
     "-H",
@@ -44,7 +48,8 @@ default_args = [
 MINUTES = 60  # seconds
 
 
-@app.function(allow_concurrent_inputs=1000, cpu=workers)
+@app.function(cpu=workers)
+@modal.concurrent(max_inputs=1000)
 @modal.web_server(port=8089)
 def serve():
     run_locust.local(default_args)
@@ -75,7 +80,7 @@ def main(
         t,
     ]
 
-    html_report_file = OUT_DIRECTORY / "report.html"
+    html_report_file = str(PosixPath(OUT_DIRECTORY / "report.html"))
     args += [
         "--headless",  # run without browser UI
         "--autostart",  # start test immediately

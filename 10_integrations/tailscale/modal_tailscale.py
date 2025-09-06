@@ -1,5 +1,5 @@
 # ---
-# lambda-test: false
+# lambda-test: false  # missing-secret
 # ---
 
 # # Add Modal Apps to Tailscale
@@ -22,19 +22,20 @@ image = (
     .run_commands("curl -fsSL https://tailscale.com/install.sh | sh")
     .pip_install("requests==2.32.3", "PySocks==1.7.1")
     .add_local_file("./entrypoint.sh", "/root/entrypoint.sh", copy=True)
-    .dockerfile_commands(
-        "RUN chmod a+x /root/entrypoint.sh",
-        'ENTRYPOINT ["/root/entrypoint.sh"]',
-    )
+    .run_commands("chmod a+x /root/entrypoint.sh")
+    .entrypoint(["/root/entrypoint.sh"])
 )
-app = modal.App(image=image)
+app = modal.App("example-modal-tailscale", image=image)
 
-# Configure Python to use the SOCKS5 proxy globally.
+# Packages might not be installed locally. This catches import errors and
+# only attempts imports in the container.
 with image.imports():
     import socket
 
     import socks
 
+# Configure Python to use the SOCKS5 proxy globally.
+if not modal.is_local():
     socks.set_default_proxy(socks.SOCKS5, "0.0.0.0", 1080)
     socket.socket = socks.socksocket
 
@@ -42,9 +43,7 @@ with image.imports():
 # Run your function adding a Tailscale secret. We suggest creating a [reusable and ephemeral key](https://tailscale.com/kb/1111/ephemeral-nodes).
 @app.function(
     secrets=[
-        modal.Secret.from_name(
-            "tailscale-auth", required_keys=["TAILSCALE_AUTHKEY"]
-        ),
+        modal.Secret.from_name("tailscale-auth", required_keys=["TAILSCALE_AUTHKEY"]),
         modal.Secret.from_dict(
             {
                 "ALL_PROXY": "socks5://localhost:1080/",

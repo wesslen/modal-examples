@@ -23,6 +23,7 @@ import io
 import random
 import time
 from pathlib import Path
+from typing import Optional
 
 import modal
 
@@ -41,6 +42,8 @@ app = modal.App("example-text-to-image")
 # Below, we start from a lightweight base Linux image
 # and then install our Python dependencies, like Hugging Face's `diffusers` library and `torch`.
 
+CACHE_DIR = "/cache"
+
 image = (
     modal.Image.debian_slim(python_version="3.12")
     .pip_install(
@@ -53,7 +56,12 @@ image = (
         "torchvision==0.20.1",
         "transformers~=4.44.0",
     )
-    .env({"HF_HUB_ENABLE_HF_TRANSFER": "1"})  # faster downloads
+    .env(
+        {
+            "HF_HUB_ENABLE_HF_TRANSFER": "1",  # faster downloads
+            "HF_HUB_CACHE": CACHE_DIR,
+        }
+    )
 )
 
 with image.imports():
@@ -63,9 +71,9 @@ with image.imports():
 
 # ## Implementing SD3.5 Large Turbo inference on Modal
 
-# We wrap inference in a Modal [Cls](https://modal.com/docs/guide/lifecycle-methods)
-# that ensures models are downloaded when we `build` our container image (just like our dependencies)
-# and that models are loaded and then moved to the GPU when a new container starts.
+# We wrap inference in a Modal [Cls](https://modal.com/docs/guide/lifecycle-functions)
+# that ensures models are loaded and then moved to the GPU once when a new container
+# starts, before the container picks up any work.
 
 # The `run` function just wraps a `diffusers` pipeline.
 # It sends the output image back to the client as bytes.
@@ -75,32 +83,30 @@ with image.imports():
 # See the `/docs` route of the URL ending in `inference-web.modal.run`
 # that appears when you deploy the app for details.
 
-model_id = "adamo1139/stable-diffusion-3.5-large-turbo-ungated"
-model_revision_id = "9ad870ac0b0e5e48ced156bb02f85d324b7275d2"
+MODEL_ID = "adamo1139/stable-diffusion-3.5-large-turbo-ungated"
+MODEL_REVISION_ID = "9ad870ac0b0e5e48ced156bb02f85d324b7275d2"
+
+cache_volume = modal.Volume.from_name("hf-hub-cache", create_if_missing=True)
 
 
 @app.cls(
     image=image,
     gpu="H100",
     timeout=10 * MINUTES,
+    volumes={CACHE_DIR: cache_volume},
 )
 class Inference:
-    @modal.build()
     @modal.enter()
-    def initialize(self):
+    def load_pipeline(self):
         self.pipe = diffusers.StableDiffusion3Pipeline.from_pretrained(
-            model_id,
-            revision=model_revision_id,
+            MODEL_ID,
+            revision=MODEL_REVISION_ID,
             torch_dtype=torch.bfloat16,
-        )
-
-    @modal.enter()
-    def move_to_gpu(self):
-        self.pipe.to("cuda")
+        ).to("cuda")
 
     @modal.method()
     def run(
-        self, prompt: str, batch_size: int = 4, seed: int = None
+        self, prompt: str, batch_size: int = 4, seed: Optional[int] = None
     ) -> list[bytes]:
         seed = seed if seed is not None else random.randint(0, 2**32 - 1)
         print("seeding RNG with", seed)
@@ -121,8 +127,8 @@ class Inference:
         torch.cuda.empty_cache()  # reduce fragmentation
         return image_output
 
-    @modal.web_endpoint(docs=True)
-    def web(self, prompt: str, seed: int = None):
+    @modal.fastapi_endpoint(docs=True)
+    def web(self, prompt: str, seed: Optional[int] = None):
         return Response(
             content=self.run.local(  # run in the same container
                 prompt, batch_size=1, seed=seed
@@ -153,7 +159,7 @@ def entrypoint(
     samples: int = 4,
     prompt: str = "A princess riding on a pony",
     batch_size: int = 4,
-    seed: int = None,
+    seed: Optional[int] = None,
 ):
     print(
         f"prompt => {prompt}",
@@ -172,10 +178,10 @@ def entrypoint(
         start = time.time()
         images = inference_service.run.remote(prompt, batch_size, seed)
         duration = time.time() - start
-        print(f"Run {sample_idx+1} took {duration:.3f}s")
+        print(f"Run {sample_idx + 1} took {duration:.3f}s")
         if sample_idx:
             print(
-                f"\tGenerated {len(images)} image(s) at {(duration)/len(images):.3f}s / image."
+                f"\tGenerated {len(images)} image(s) at {(duration) / len(images):.3f}s / image."
             )
         for batch_idx, image_bytes in enumerate(images):
             output_path = (
@@ -193,7 +199,7 @@ def entrypoint(
 
 # ## Generating Stable Diffusion images via an API
 
-# The Modal `Cls` above also included a [`web_endpoint`](https://modal.com/docs/examples/basic_web),
+# The Modal `Cls` above also included a [`fastapi_endpoint`](https://modal.com/docs/examples/basic_web),
 # which adds a simple web API to the inference method.
 
 # To try it out, run
@@ -228,10 +234,8 @@ web_image = (
 )
 
 
-@app.function(
-    image=web_image,
-    allow_concurrent_inputs=1000,
-)
+@app.function(image=web_image)
+@modal.concurrent(max_inputs=1000)
 @modal.asgi_app()
 def ui():
     import fastapi.staticfiles
@@ -247,7 +251,7 @@ def ui():
             "index.html",
             {
                 "request": request,
-                "inference_url": Inference.web.web_url,
+                "inference_url": Inference.web.get_web_url(),
                 "model_name": "Stable Diffusion 3.5 Large Turbo",
                 "default_prompt": "A cinematic shot of a baby raccoon wearing an intricate italian priest robe.",
             },

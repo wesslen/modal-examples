@@ -1,8 +1,8 @@
 # Modal Podcast Transcriber
 
-This is a complete application that uses [OpenAI Whisper](https://github.com/openai/whisper) to transcribe podcasts. Modal spins up 100-300 containers for a single transcription run, so hours of audio can be transcribed on-demand in a few minutes.
+This is a complete application that uses [NVIDIA Parakeet ASR](https://docs.nvidia.com/nemo-framework/user-guide/latest/nemotoolkit/asr/models.html#parakeet) to transcribe podcasts. Modal spins up multiple containers for a single transcription run, so hours of audio can be transcribed on-demand in a few minutes.
 
-You can find the app here: https://modal-labs--whisper-pod-transcriber-fastapi-app.modal.run/
+You can find our deployment of the app [here](https://modal-labs-examples--parakeet-pod-transcriber-fastapi-app.modal.run/).
 
 ## Architecture
 
@@ -44,11 +44,11 @@ The last command will start a watcher process that will rebuild your static fron
 Once you have `vite build` running, in a separate shell run this to start an ephemeral app on Modal:
 
 ```shell
-modal serve app.main
+modal serve -m app.main
 ```
 
 Pressing `Ctrl+C` will stop your app.
 
 ### Deploy to Modal
 
-Once your happy with your changes, run `modal deploy app.main` to deploy your app to Modal.
+Once your happy with your changes, run `modal deploy -m app.main` to deploy your app to Modal.

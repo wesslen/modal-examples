@@ -34,7 +34,7 @@ import modal
 from pydantic import BaseModel, Field
 
 image = modal.Image.debian_slim(python_version="3.11").pip_install(
-    "instructor~=1.0.0", "anthropic~=0.23.1"
+    "instructor~=1.7.2", "anthropic==0.42.0"
 )
 
 # This example uses models from Anthropic, so if you want to run it yourself,
@@ -42,11 +42,10 @@ image = modal.Image.debian_slim(python_version="3.11").pip_install(
 # called `my-anthropic-secret` to hold share it with your Modal Functions.
 
 app = modal.App(
+    "example-instructor-generate",
     image=image,
     secrets=[
-        modal.Secret.from_name(
-            "anthropic-secret", required_keys=["ANTHROPIC_API_KEY"]
-        )
+        modal.Secret.from_name("anthropic-secret", required_keys=["ANTHROPIC_API_KEY"])
     ],
 )
 
@@ -150,16 +149,14 @@ class ExampleMetadataExtraction(BaseModel):
 class ExampleMetadata(ExampleMetadataExtraction):
     """Metadata about an example from the Modal examples repo."""
 
-    filename: Optional[str] = Field(
-        ..., description="The filename of the example."
-    )
+    filename: Optional[str] = Field(..., description="The filename of the example.")
 
 
 # With these schemas in hand, it's straightforward to write the function that extracts the metadata.
 # Note that we decorate it with `@app.function` to make it run on Modal.
 
 
-@app.function(concurrency_limit=5)  # watch those LLM API rate limits!
+@app.function(max_containers=5)  # watch those LLM API rate limits!
 def extract_example_metadata(
     example_contents: Optional[str] = None,
     filename: Optional[str] = None,
@@ -191,9 +188,7 @@ def extract_example_metadata(
     )
 
     # inject the filename
-    full_metadata = ExampleMetadata(
-        **extracted_metadata.dict(), filename=filename
-    )
+    full_metadata = ExampleMetadata(**extracted_metadata.dict(), filename=filename)
 
     # return it as JSON
     return full_metadata.model_dump_json()

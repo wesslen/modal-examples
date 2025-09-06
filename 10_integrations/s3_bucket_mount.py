@@ -28,10 +28,10 @@ from pathlib import Path, PosixPath
 
 import modal
 
-image = modal.Image.debian_slim().pip_install(
+image = modal.Image.debian_slim(python_version="3.12").pip_install(
     "requests==2.31.0", "duckdb==0.10.0", "matplotlib==3.8.3"
 )
-app = modal.App(image=image)
+app = modal.App("example-s3-bucket-mount", image=image)
 
 secret = modal.Secret.from_name(
     "s3-bucket-secret",
@@ -63,9 +63,7 @@ with image.imports():
 
 @app.function(
     volumes={
-        MOUNT_PATH: modal.CloudBucketMount(
-            "modal-s3mount-test-bucket", secret=secret
-        ),
+        MOUNT_PATH: modal.CloudBucketMount("modal-s3mount-test-bucket", secret=secret),
     },
 )
 def download_data(year: int, month: int) -> str:
@@ -184,9 +182,7 @@ def plot(dataset) -> bytes:
 @app.local_entrypoint()
 def main():
     # List of tuples[year, month].
-    inputs = [
-        (year, month) for year in range(2018, 2023) for month in range(1, 13)
-    ]
+    inputs = [(year, month) for year in range(2018, 2023) for month in range(1, 13)]
 
     # List of file paths in S3.
     parquet_files: list[str] = []

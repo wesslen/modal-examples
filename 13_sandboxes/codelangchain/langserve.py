@@ -1,6 +1,6 @@
 # ---
 # pytest: false
-# cmd: ["modal", "serve", "13_sandboxes.codelangchain.langserve"]
+# cmd: ["modal", "serve", "-m", "13_sandboxes.codelangchain.langserve"]
 # ---
 
 # # Deploy LangChain and LangGraph applications with LangServe
@@ -20,7 +20,7 @@ import modal
 from .agent import construct_graph, create_sandbox
 from .src.common import image
 
-app = modal.App("example-langserve")
+app = modal.App("example-codelangchain-langserve")
 
 image = image.pip_install("langserve[all]==0.3.0")
 
@@ -28,12 +28,8 @@ image = image.pip_install("langserve[all]==0.3.0")
 @app.function(
     image=image,
     secrets=[  # see the agent.py file for more information on Secrets
-        modal.Secret.from_name(
-            "openai-secret", required_keys=["OPENAI_API_KEY"]
-        ),
-        modal.Secret.from_name(
-            "langsmith-secret", required_keys=["LANGCHAIN_API_KEY"]
-        ),
+        modal.Secret.from_name("openai-secret", required_keys=["OPENAI_API_KEY"]),
+        modal.Secret.from_name("langsmith-secret", required_keys=["LANGCHAIN_API_KEY"]),
     ],
 )
 @modal.asgi_app()
